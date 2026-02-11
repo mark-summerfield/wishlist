@@ -1,0 +1,17 @@
+#!/usr/bin/env wish9
+# Copyright © 2026 Mark Summerfield. All rights reserved.
+
+if {![catch {file readlink [info script]} name]} {
+    const APPPATH [file dirname $name]
+} else {
+    const APPPATH [file normalize [file dirname [info script]]]
+}
+tcl::tm::path add $APPPATH
+set ::auto_path [linsert $::auto_path 0 [file home]/opt/tcl9lib]
+
+const VERSION 0.1.0
+
+package require app
+
+set app [App new]
+$app show
