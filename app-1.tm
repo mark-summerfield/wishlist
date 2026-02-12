@@ -68,6 +68,7 @@ oo::define App method make_fonts {} {
 oo::define App method make_menus {} {
     menu .menu
     my make_file_menu
+    my make_category_menu
     my make_wish_menu
     . configure -menu .menu
 }
@@ -76,6 +77,12 @@ oo::define App method make_file_menu {} {
     menu .menu.file
     .menu add cascade -menu .menu.file -label File -underline 0
     puts make_file_menu ;# TODO
+}
+
+oo::define App method make_category_menu {} {
+    menu .menu.category
+    .menu add cascade -menu .menu.category -label Category -underline 0
+    puts make_category_menu ;# TODO
 }
 
 oo::define App method make_wish_menu {} {
@@ -127,7 +134,7 @@ oo::define App method populate {} {
     $Tree delete [$Tree children {}]
     set width 0
     foreach category [$Wldb categories] {
-        lassign $category cid name
+        lassign $category cid name _
         $Tree insert {} end -id C$cid -text $name
         if {[set w [font measure TkDefaultFont WW$name]] > $width} {
             set width $w

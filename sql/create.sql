@@ -4,7 +4,8 @@ PRAGMA USER_VERSION = 1;
 
 CREATE TABLE Categories (
     cid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    name TEXT NOT NULL
+    name TEXT UNIQUE NOT NULL,
+    pos INTEGER DEFAULT 0 UNIQUE NOT NULL
 );
 
 CREATE TABLE Wishes (
@@ -18,15 +19,18 @@ CREATE TABLE Wishes (
     UNIQUE(cid, pos)
 ) WITHOUT ROWID;
 
-CREATE VIEW WishesByCidPosView AS
-    SELECT wid, name, note, cid, pos FROM Wishes ORDER BY cid, pos;
+-- If no pos is specified in the insert it will be 0 (the default) in which
+-- case this trigger will be applied and a correctly unique pos will be set.
+CREATE TRIGGER InsertCategoryTrigger AFTER INSERT ON Categories
+    FOR EACH ROW WHEN NEW.pos = 0
+        BEGIN
+            UPDATE Categories
+                SET pos = (SELECT COALESCE(MAX(pos), 0) + 1 FROM Categories)
+                WHERE cid = NEW.cid;
+        END;
 
-INSERT INTO Categories (name) VALUES ('Fiction');
-INSERT INTO Categories (name) VALUES ('Tech');
-INSERT INTO Categories (name) VALUES ('Bio');
-INSERT INTO Categories (name) VALUES ('History');
-INSERT INTO Categories (name) VALUES ('Non-Fiction');
-INSERT INTO Categories (name) VALUES ('Long Shots');
-INSERT INTO Categories (name) VALUES ('Off Quota');
-INSERT INTO Categories (name) VALUES ('Andrea');
-INSERT INTO Categories (name) VALUES ('Domestic');
+CREATE VIEW CategoriesView AS
+    SELECT cid, name, pos FROM Categories ORDER BY pos;
+
+CREATE VIEW WishesView AS
+    SELECT wid, name, note, cid, pos FROM Wishes ORDER BY cid, pos;

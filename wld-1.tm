@@ -19,6 +19,7 @@ oo::define Wld constructor filename {
     $Db transaction {
         if {!$exists} {
             $Db eval [readFile $::APPPATH/sql/create.sql]
+            $Db eval [readFile $::APPPATH/sql/insert.sql]
         }
     }
 }
@@ -36,15 +37,15 @@ oo::define Wld method db {} { return $Db }
 
 oo::define Wld method categories {} {
     set categories [list]
-    $Db eval {SELECT cid, name FROM Categories ORDER BY cid} {
-        lappend categories [list $cid $name]
+    $Db eval {SELECT cid, name, pos FROM CategoriesView} {
+        lappend categories [list $cid $name $pos]
     }
     return $categories
 }
 
 oo::define Wld method wishes {} {
     set wishes [list]
-    $Db eval {SELECT wid, name, note, cid, pos FROM WishesByCidPosView} {
+    $Db eval {SELECT wid, name, note, cid, pos FROM WishesView} {
         lappend wishes [list $wid $name $note $cid $pos]
     }
     return $wishes

@@ -1,5 +1,6 @@
 # TODO icon
-# TODO new/edit dialog
+# TODO menus
+# TODO Item new/edit dialog
 
 wishlists.tk
 app-1.tm
@@ -10,6 +11,7 @@ wld-1.tm
 
 sql/prepare.sql
 sql/create.sql
+sql/insert.sql
 
 ref-1.tm
 util-1.tm
@@ -26,15 +28,25 @@ db-1.tm
 
 # UI
 #
-# &File: &Export...; &Config...; &About; &Quit
-# &Item: &New...; &Edit...; &Lookup*; &Copy to Clipboard;
-#	 Move to &Top; Move &Up; &Move Down; Move to &Bottom;
-#        &Delete...; 
+# &File:
+#   &Export... (.txt,.html,.csv); &Config...; &About; &Quit ^C
+# &Item:
+#   &New... ^N; &Edit... ^E; &Lookup* ^L; &Copy to Clipboard;
+#   Move to &Top; Move &Up; &Move Down; Move to &Bottom;
+#   &Delete...
+# &Category:
+#   &New...; &Rename...;
+#   Move to &Top; Move &Up; &Move Down; Move to &Bottom;
+#   &Delete...
 #
 # - Each new item that's added should be placed _first_ in its category
-# * For each item website I use (e.g., amz, abe, hen) it should create a
-#   site-specific search url based on the items's ISBN or title & open a
-#   browser page so I get to see the prices in each one.
+# - Item→Edit: can change name, note, category (cid)
+# * For each item lookup:
+#	If there's a valid ISBN then create
+#	    site-specific search urls based on the items's ISBN or title
+#	    for the websites I use (e.g., amz, abe, hen) & open a
+#	    browser page so I get to see the prices in each one.
+#	Otherwise use the ID or name for a generic duckduckgo search
 
 st.sh
 
