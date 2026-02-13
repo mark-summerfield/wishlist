@@ -1,9 +1,10 @@
-# TODO icon
 # TODO menus
-# TODO Item new/edit dialog
+# TODO Wish new/edit dialog
 
 wishlists.tk
 app-1.tm
+app_menus-1.tm
+app_actions-1.tm
 misc-1.tm
 config-1.tm
 config_form-1.tm
@@ -27,17 +28,6 @@ ui-1.tm
 db-1.tm
 
 # UI
-#
-# &File:
-#   &Export... (.txt,.html,.csv); &Config...; &About; &Quit ^C
-# &Item:
-#   &New... ^N; &Edit... ^E; &Lookup* ^L; &Copy to Clipboard;
-#   Move to &Top; Move &Up; &Move Down; Move to &Bottom;
-#   &Delete...
-# &Category:
-#   &New...; &Rename...;
-#   Move to &Top; Move &Up; &Move Down; Move to &Bottom;
-#   &Delete...
 #
 # - Each new item that's added should be placed _first_ in its category
 # - Item→Edit: can change name, note, category (cid)

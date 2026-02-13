@@ -1,71 +1,52 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
-package require about_form
-package require config
-package require config_form
-package require misc
-package require ref
-package require scrollutil_tile 2
-package require ui
-package require wld
-
-oo::singleton create App {
-    variable Tree
-    variable Wldb
+oo::define App method make_menus {} {
+    menu .menu
+    my make_file_menu
+    my make_category_menu
+    my make_wish_menu
+    . configure -menu .menu
 }
 
-package require app_actions
-package require app_menus
-
-oo::define App constructor {} {
-    ui::wishinit
-    tk appname Wishlists
-    Config new
-    set Wldb [Wld new [get_db_filename]]
-    my make_fonts
-    my make_ui
+# &File:
+#   &Export... (.txt,.html,.csv); &Config...; &About; &Quit ^C
+oo::define App method make_file_menu {} {
+    menu .menu.file
+    .menu add cascade -menu .menu.file -label File -underline 0
+    .menu.file add command -command [callback on_file_export] \
+        -label Export… -underline 0 -compound left \
+        -image [ui::icon export.svg $::MENU_ICON_SIZE]
+    .menu.file add separator
+    .menu.file add command -command [callback on_config] -label Config… \
+        -underline 0 -compound left \
+        -image [ui::icon preferences-system.svg $::MENU_ICON_SIZE]
+    .menu.file add command -command [callback on_about] -label About \
+        -underline 0 -compound left \
+        -image [ui::icon about.svg $::MENU_ICON_SIZE]
+    .menu.file add separator
+    .menu.file add command -command [callback on_quit] -label Quit \
+        -underline 0 -accelerator Ctrl+Q  -compound left \
+        -image [ui::icon quit.svg $::MENU_ICON_SIZE]
 }
 
-oo::define App method show {} {
-    wm deiconify .
-    set config [Config new]
-    wm geometry . [$config geometry]
-    raise .
-    update
-    after idle [callback on_startup]
+# &Category:
+#   &New...; &Rename...;
+#   Move to &Top; Move &Up; &Move Down; Move to &Bottom;
+#   &Delete...
+oo::define App method make_category_menu {} {
+    menu .menu.category
+    .menu add cascade -menu .menu.category -label Category -underline 0
+    puts make_category_menu ;# TODO
 }
 
-oo::define App method on_startup {} {
-    my populate
-}
-
-oo::define App method make_ui {} {
-    my prepare_ui
-    my make_menus
-    my make_widgets
-    my make_layout
-    my make_bindings
-}
-
-oo::define App method prepare_ui {} {
-    wm title . [tk appname]
-    wm iconname . [tk appname]
-    wm iconphoto . -default [ui::icon icon.svg]
-    wm minsize . 640 480
-}
-
-oo::define App method make_fonts {} {
-    set config [Config new]
-    set family [$config family]
-    set size [$config size]
-    foreach name {Sans Bold Italic BoldItalic} {
-        catch { font delete $name }
-    }
-    font create Sans -family $family -size $size
-    font create Bold -family $family -size $size -weight bold
-    font create Italic -family $family -size $size -slant italic
-    font create BoldItalic -family $family -size $size -weight bold \
-        -slant italic
+# &Wish:
+#   &New... ^N; &Edit... ^E; &Lookup* ^L; &Copy to Clipboard;
+#   Move to &Top; Move &Up; &Move Down; Move to &Bottom;
+#   &Delete...
+oo::define App method make_wish_menu {} {
+    menu .menu.wish
+    .menu add cascade -menu .menu.wish -label Wish -underline 0
+    puts make_wish_menu ;# TODO
 }
 
 oo::define App method make_widgets {} {
@@ -103,6 +84,7 @@ oo::define App method make_bindings {} {
     bind . <Alt-a> [callback on_about]
     bind . <Alt-c> [callback on_config]
     bind . <Control-q> [callback on_quit]
+    bind . <Escape> [callback on_quit]
     wm protocol . WM_DELETE_WINDOW [callback on_quit]
 }
 
