@@ -1,10 +1,10 @@
-# TODO menus
-# TODO toolbar & [X] Show Wish Toolbar
+# TODO wld
 # TODO Wish new/edit dialog
 
 wishlists.tk
 app-1.tm
 app_menus-1.tm
+app_toolbars-1.tm
 app_actions-1.tm
 misc-1.tm
 config-1.tm

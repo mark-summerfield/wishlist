@@ -8,8 +8,6 @@ oo::define App method make_menus {} {
     . configure -menu .menu
 }
 
-# &File:
-#   &Export... (.txt,.html,.csv); &Config...; &About; &Quit ^C
 oo::define App method make_file_menu {} {
     menu .menu.file
     .menu add cascade -menu .menu.file -label File -underline 0
@@ -29,81 +27,64 @@ oo::define App method make_file_menu {} {
         -image [ui::icon quit.svg $::MENU_ICON_SIZE]
 }
 
-# &Category:
-#   &New...; &Rename...;
-#   Move to &Top; Move &Up; &Move Down; Move to &Bottom;
-#   &Delete...
 oo::define App method make_category_menu {} {
     menu .menu.category
     .menu add cascade -menu .menu.category -label Category -underline 0
-    puts make_category_menu ;# TODO
+    .menu.category add command -command [callback on_category_new] \
+        -label New… -underline 0 -compound left \
+        -image [ui::icon category-new.svg $::MENU_ICON_SIZE]
+    .menu.category add command -command [callback on_category_rename] \
+        -label Rename… -underline 0 -compound left \
+        -image [ui::icon category-rename.svg $::MENU_ICON_SIZE]
+    .menu.category add separator
+    .menu.category add command -command [callback on_category_move_top] \
+        -label "Move to Top" -underline 8 -compound left \
+        -image [ui::icon go-top.svg $::MENU_ICON_SIZE]
+    .menu.category add command -command [callback on_category_move_up] \
+        -label "Move Up" -underline 5 -compound left \
+        -image [ui::icon go-up.svg $::MENU_ICON_SIZE]
+    .menu.category add command -command [callback on_category_move_down] \
+        -label "Move Down" -underline 0 -compound left \
+        -image [ui::icon go-down.svg $::MENU_ICON_SIZE]
+    .menu.category add command -command [callback on_category_move_bottom] \
+        -label "Move to Bottom" -underline 8 -compound left \
+        -image [ui::icon go-bottom.svg $::MENU_ICON_SIZE]
+    .menu.category add separator
+    .menu.category add command -command [callback on_category_delete] \
+        -label Delete… -underline 0 -compound left \
+        -image [ui::icon category-delete.svg $::MENU_ICON_SIZE]
 }
 
-# &Wish:
-#   &New... ^N; &Edit... ^E; &Lookup* ^L; &Copy to Clipboard;
-#   Move to &Top; Move &Up; &Move Down; Move to &Bottom;
-#   &Delete...
 oo::define App method make_wish_menu {} {
     menu .menu.wish
     .menu add cascade -menu .menu.wish -label Wish -underline 0
-    puts make_wish_menu ;# TODO
-}
-
-oo::define App method make_widgets {} {
-    set config [Config new]
-    ttk::frame .mf ;# main frame
-    ttk::frame .mf.tb ;# toolbar
-    ttk::frame .mf.tf ;# tree frame
-    my make_tree
-}
-
-oo::define App method make_tree {} {
-    set sa [scrollutil::scrollarea .mf.tf.sa]
-    set Tree [ttk::treeview .mf.tf.sa.tree -selectmode browse -striped 1 \
-                -columns {name note wid}]
-    $sa setwidget $Tree
-    pack $sa -fill both -expand 1
-    $Tree column #0 -stretch 0
-    $Tree column 0 -stretch 1
-    $Tree column 1 -stretch 1
-    $Tree column 2 -stretch 0
-    $Tree heading #0 -text Category
-    $Tree heading 0 -text Name/Title
-    $Tree heading 1 -text Note
-    $Tree heading 2 -text ID/ISBN
-}
-
-oo::define App method make_layout {} {
-    const opts "-pady 3 -padx 3"
-    pack .mf.tb -fill x -side top {*}$opts
-    pack .mf.tf -fill both -expand 1 {*}$opts
-    pack .mf -fill both -expand 1
-}
-
-oo::define App method make_bindings {} {
-    bind . <Alt-a> [callback on_about]
-    bind . <Alt-c> [callback on_config]
-    bind . <Control-q> [callback on_quit]
-    bind . <Escape> [callback on_quit]
-    wm protocol . WM_DELETE_WINDOW [callback on_quit]
-}
-
-oo::define App method populate {} {
-    $Tree delete [$Tree children {}]
-    set width 0
-    foreach category [$Wldb categories] {
-        lassign $category cid name _
-        $Tree insert {} end -id C$cid -text $name
-        if {[set w [font measure TkDefaultFont WW$name]] > $width} {
-            set width $w
-        }
-    }
-    $Tree column #0 -width $width
-    set name_width 0
-    set wid_width 0
-    foreach wish [$Wldb wishes] {
-        lassign $wish wid name note cid _
-        # TODO
-        puts "cid=$cid name='$name' note='$note' wid=$wid"
-    }
+    .menu.wish add command -command [callback on_wish_new] \
+        -label New… -underline 0 -compound left \
+        -image [ui::icon wish-new.svg $::MENU_ICON_SIZE]
+    .menu.wish add command -command [callback on_wish_edit] \
+        -label Edit… -underline 0 -compound left \
+        -image [ui::icon wish-edit.svg $::MENU_ICON_SIZE]
+    .menu.wish add command -command [callback on_wish_lookup] \
+        -label Lookup -underline 0 -compound left \
+        -image [ui::icon wish-lookup.svg $::MENU_ICON_SIZE]
+    .menu.wish add command -command [callback on_wish_copy] \
+        -label "Copy to Clipboard" -underline 0 -compound left \
+        -image [ui::icon edit-copy.svg $::MENU_ICON_SIZE]
+    .menu.wish add separator
+    .menu.wish add command -command [callback on_wish_move_top] \
+        -label "Move to Top" -underline 8 -compound left \
+        -image [ui::icon wish-go-top.svg $::MENU_ICON_SIZE]
+    .menu.wish add command -command [callback on_wish_move_up] \
+        -label "Move Up" -underline 5 -compound left \
+        -image [ui::icon wish-go-up.svg $::MENU_ICON_SIZE]
+    .menu.wish add command -command [callback on_wish_move_down] \
+        -label "Move Down" -underline 0 -compound left \
+        -image [ui::icon wish-go-down.svg $::MENU_ICON_SIZE]
+    .menu.wish add command -command [callback on_wish_move_bottom] \
+        -label "Move to Bottom" -underline 8 -compound left \
+        -image [ui::icon wish-go-bottom.svg $::MENU_ICON_SIZE]
+    .menu.wish add separator
+    .menu.wish add command -command [callback on_wish_delete] \
+        -label Delete… -underline 0 -compound left \
+        -image [ui::icon wish-delete.svg $::MENU_ICON_SIZE]
 }

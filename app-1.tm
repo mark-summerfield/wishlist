@@ -16,6 +16,7 @@ oo::singleton create App {
 
 package require app_actions
 package require app_menus
+package require app_toolbars
 
 oo::define App constructor {} {
     ui::wishinit
@@ -73,6 +74,7 @@ oo::define App method make_widgets {} {
     ttk::frame .mf ;# main frame
     ttk::frame .mf.tb ;# toolbar
     ttk::frame .mf.tf ;# tree frame
+    my make_toolbars
     my make_tree
 }
 
@@ -95,13 +97,12 @@ oo::define App method make_tree {} {
 oo::define App method make_layout {} {
     const opts "-pady 3 -padx 3"
     pack .mf.tb -fill x -side top {*}$opts
+    my make_toolbar_layout
     pack .mf.tf -fill both -expand 1 {*}$opts
     pack .mf -fill both -expand 1
 }
 
 oo::define App method make_bindings {} {
-    bind . <Alt-a> [callback on_about]
-    bind . <Alt-c> [callback on_config]
     bind . <Control-q> [callback on_quit]
     wm protocol . WM_DELETE_WINDOW [callback on_quit]
 }
