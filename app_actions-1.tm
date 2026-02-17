@@ -93,16 +93,14 @@ oo::define App method on_category_move_bottom {} {
 }
 
 oo::define App method on_category_delete {} {
-    set tcid [my get_tcid]
-    if {$tcid in {C1 C2}} {
+    if {[$Wldb category_count] == 1} {
         MessageForm show "Delete Category — [tk appname]" \
-            "Cannot delete either of the original two categories;
-            they can be renamed though." OK warning
+            "Cannot delete the last category." OK warning
         return
     }
+    set tcid [my get_tcid]
     if {[string match C* $tcid]} {
         set cid [string range $tcid 1 end]
-        puts "tcid=$tcid cid=$cid [$Wldb wishes_in_category $cid]"
         if {[$Wldb wishes_in_category $cid]} {
             MessageForm show "Delete Category — [tk appname]" \
                 "Cannot delete a nonempty category;
@@ -114,7 +112,7 @@ oo::define App method on_category_delete {} {
                 eq "yes"} {
             $Wldb category_delete $cid
             my populate
-            after idle [my select_category C1]
+            after idle [list select_tree_item $Tree]
         }
     }
 }

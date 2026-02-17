@@ -42,6 +42,10 @@ oo::define Wld method categories {} {
     return $categories
 }
 
+oo::define Wld method category_count {} {
+    $Db onecolumn {SELECT COUNT(*) FROM Categories}
+}
+
 oo::define Wld method category_name cid {
     $Db onecolumn {SELECT name FROM Categories WHERE cid = :cid}
 }

@@ -26,10 +26,9 @@ CREATE VIEW WishesView AS
     SELECT wid, name, note, cid, pos FROM Wishes ORDER BY cid, pos;
 
 CREATE TRIGGER DeleteCategoryTrigger1 BEFORE DELETE ON Categories
-    FOR EACH ROW WHEN OLD.cid IN (1, 2)
+    FOR EACH ROW WHEN (SELECT COUNT(*) FROM Categories) = 1
     BEGIN
-        SELECT RAISE(ABORT, 'cannot delete the original two categories;
-they can be renamed though');
+        SELECT RAISE(ABORT, 'cannot delete the last category');
     END;
 
 CREATE TRIGGER DeleteCategoryTrigger2 BEFORE DELETE ON Categories
@@ -62,5 +61,4 @@ CREATE TRIGGER InsertWishTrigger AFTER INSERT ON Wishes
                 WHERE wid = NEW.wid AND cid = NEW.cid;
         END;
 
-INSERT INTO Categories (name) VALUES ('Fiction');
-INSERT INTO Categories (name) VALUES ('Non-Fiction');
+INSERT INTO Categories (name) VALUES ('Wishes');
