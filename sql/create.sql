@@ -11,13 +11,34 @@ CREATE TABLE Categories (
 CREATE TABLE Wishes (
     wid TEXT PRIMARY KEY NOT NULL, -- ISBN for books
     name TEXT NOT NULL,
-    note TEXT, -- plain text, e.g., Pub date or Due date or comments
+    note TEXT, -- plain text, e.g., Pub date or Due date and/or comments
     cid INTEGER NOT NULL,
     pos INTEGER DEFAULT 0 NOT NULL,
 
     FOREIGN KEY(cid) REFERENCES Categories(cid),
     UNIQUE(cid, pos)
 ) WITHOUT ROWID;
+
+CREATE VIEW CategoriesView AS
+    SELECT cid, name, pos FROM Categories ORDER BY pos;
+
+CREATE VIEW WishesView AS
+    SELECT wid, name, note, cid, pos FROM Wishes ORDER BY cid, pos;
+
+CREATE TRIGGER DeleteCategoryTrigger1 BEFORE DELETE ON Categories
+    FOR EACH ROW WHEN OLD.cid IN (1, 2)
+    BEGIN
+        SELECT RAISE(ABORT, 'cannot delete the original two categories;
+they can be renamed though');
+    END;
+
+CREATE TRIGGER DeleteCategoryTrigger2 BEFORE DELETE ON Categories
+    FOR EACH ROW
+        WHEN (SELECT COUNT(*) FROM Wishes WHERE cid = OLD.cid) > 0
+    BEGIN
+        SELECT RAISE(ABORT, 'cannot delete a nonempty category;
+delete its wishes first');
+    END;
 
 -- If no pos is specified in the insert it will be 0 (the default) in which
 -- case this trigger will be applied and a correctly unique pos will be set.
@@ -29,8 +50,17 @@ CREATE TRIGGER InsertCategoryTrigger AFTER INSERT ON Categories
                 WHERE cid = NEW.cid;
         END;
 
-CREATE VIEW CategoriesView AS
-    SELECT cid, name, pos FROM Categories ORDER BY pos;
+-- If no pos is specified in the insert it will be 0 (the default) in which
+-- case this trigger will be applied and a correctly unique pos x cid will
+-- be set.
+CREATE TRIGGER InsertWishTrigger AFTER INSERT ON Wishes
+    FOR EACH ROW WHEN NEW.pos = 0
+        BEGIN
+            UPDATE Wishes
+                SET pos = (SELECT COALESCE(MAX(pos), 0) + 1 FROM Wishes
+                           WHERE cid = NEW.cid)
+                WHERE wid = NEW.wid AND cid = NEW.cid;
+        END;
 
-CREATE VIEW WishesView AS
-    SELECT wid, name, note, cid, pos FROM Wishes ORDER BY cid, pos;
+INSERT INTO Categories (name) VALUES ('Fiction');
+INSERT INTO Categories (name) VALUES ('Non-Fiction');

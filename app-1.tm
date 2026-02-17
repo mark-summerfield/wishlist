@@ -38,6 +38,8 @@ oo::define App method show {} {
 
 oo::define App method on_startup {} {
     my populate
+    focus $Tree
+    select_tree_item $Tree C1
 }
 
 oo::define App method make_ui {} {
@@ -82,6 +84,7 @@ oo::define App method make_tree {} {
     set sa [scrollutil::scrollarea .mf.tf.sa]
     set Tree [ttk::treeview .mf.tf.sa.tree -selectmode browse -striped 1 \
                 -columns {name note wid}]
+    ui::apply_treeview_bindings $Tree
     $sa setwidget $Tree
     pack $sa -fill both -expand 1
     $Tree column #0 -stretch 0
@@ -126,3 +129,13 @@ oo::define App method populate {} {
         puts "cid=$cid name='$name' note='$note' wid=$wid"
     }
 }
+
+oo::define App method select_category cid {
+    foreach tcid [$Tree children {}] {
+        if {$tcid eq "C$cid"} {
+            select_tree_item $Tree $tcid
+            break
+        }
+    }
+}
+

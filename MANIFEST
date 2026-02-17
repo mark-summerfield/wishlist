@@ -1,4 +1,3 @@
-# TODO people icons: Mark Andrea Anyone ?
 # TODO wld
 # TODO Wish new/edit dialog
 
@@ -14,7 +13,9 @@ wld-1.tm
 
 sql/prepare.sql
 sql/create.sql
-sql/insert.sql
+
+message_form-1.tm
+entry_form-1.tm
 
 ref-1.tm
 util-1.tm
@@ -29,9 +30,10 @@ ui-1.tm
 
 db-1.tm
 
+st.sh
+
 # UI
 #
-# - Each new item that's added should be placed _first_ in its category
 # - Item→Edit: can change name, note, category (cid)
 # * For each item lookup:
 #	If there's a valid ISBN then create
@@ -40,6 +42,19 @@ db-1.tm
 #	    browser page so I get to see the prices in each one.
 #	Otherwise use the ID or name for a generic duckduckgo search
 
-st.sh
+# Fiction — Mark
+# Tech — Mark
+# Bio — Mark
+# History — Mark
+# Non-Fiction — Mark
+# Long Shots — Mark
+# CD/DVDs — Mark
+# Birthday — Mark
+# Books — Andrea
+# CD/DVDs — Andrea
+# Birthday — Andrea
+# Off Quota
+# Domestic
+# Xmas
 
 # vim: syn=yaml
