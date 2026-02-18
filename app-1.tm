@@ -22,7 +22,6 @@ oo::define App constructor {} {
     ui::wishinit
     tk appname Wishlists
     Config new
-    set Wldb [Wld new [get_db_filename]]
     my make_fonts
     my make_ui
 }
@@ -37,9 +36,9 @@ oo::define App method show {} {
 }
 
 oo::define App method on_startup {} {
-    my populate
+    set Wldb [Wld new $Tree $::APPPATH/Wishlists.wld]
     focus $Tree
-    select_tree_item $Tree C1
+    select_tree_item $Tree
 }
 
 oo::define App method make_ui {} {
@@ -91,7 +90,7 @@ oo::define App method make_tree {} {
     $Tree column 0 -stretch 1
     $Tree column 1 -stretch 1
     $Tree column 2 -stretch 0
-    $Tree heading #0 -text Category
+    $Tree heading #0 -text Group
     $Tree heading 0 -text Name/Title
     $Tree heading 1 -text Note
     $Tree heading 2 -text ID/ISBN
@@ -107,35 +106,6 @@ oo::define App method make_layout {} {
 
 oo::define App method make_bindings {} {
     bind . <Control-q> [callback on_quit]
+    bind . <Control-s> [callback on_file_save]
     wm protocol . WM_DELETE_WINDOW [callback on_quit]
 }
-
-oo::define App method populate {} {
-    $Tree delete [$Tree children {}]
-    set width 0
-    foreach category [$Wldb categories] {
-        lassign $category cid name _
-        $Tree insert {} end -id C$cid -text $name
-        if {[set w [font measure TkDefaultFont WW$name]] > $width} {
-            set width $w
-        }
-    }
-    $Tree column #0 -width $width
-    set name_width 0
-    set wid_width 0
-    foreach wish [$Wldb wishes] {
-        lassign $wish wid name note cid _
-        # TODO
-        puts "cid=$cid name='$name' note='$note' wid=$wid"
-    }
-}
-
-oo::define App method select_category cid {
-    foreach tcid [$Tree children {}] {
-        if {$tcid eq "C$cid"} {
-            select_tree_item $Tree $tcid
-            break
-        }
-    }
-}
-

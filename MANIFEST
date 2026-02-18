@@ -2,14 +2,11 @@ wishlists.tk
 app-1.tm
 app_menus-1.tm
 app_toolbars-1.tm
-app_actions-1.tm
+app_actions-1.tm # TODO
 misc-1.tm
 config-1.tm
 config_form-1.tm
-wld-1.tm
-
-sql/prepare.sql
-sql/create.sql
+wld-1.tm # TODO
 
 message_form-1.tm
 entry_form-1.tm
@@ -29,29 +26,29 @@ db-1.tm
 
 st.sh
 
-# UI
-#
-# - Item→Edit: can change name, note, category (cid)
-# * For each item lookup:
+# For each item lookup:
 #	If there's a valid ISBN then create
 #	    site-specific search urls based on the items's ISBN or title
 #	    for the websites I use (e.g., amz, abe, hen) & open a
 #	    browser page so I get to see the prices in each one.
 #	Otherwise use the ID or name for a generic duckduckgo search
 
-# Fiction — Mark
-# Tech — Mark
-# Bio — Mark
-# History — Mark
-# Non-Fiction — Mark
-# Long Shots — Mark
-# CD/DVDs — Mark
-# Birthday — Mark
-# Books — Andrea
-# CD/DVDs — Andrea
-# Birthday — Andrea
-# Off Quota
-# Domestic
-# Xmas
+# Mark
+#   Fiction
+#   Tech
+#   Bio
+#   History
+#   Non-Fiction
+#   Long Shots
+#   CD/DVDs
+#   Birthday
+# Andrea
+#   Books
+#   CD/DVDs
+#   Birthday
+# Both
+#   Off Quota
+#   Domestic
+#   Xmas
 
 # vim: syn=yaml
