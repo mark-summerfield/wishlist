@@ -3,7 +3,6 @@
 package require about_form
 package require config
 package require config_form
-package require misc
 package require ref
 package require scrollutil_tile 2
 package require ui
@@ -38,7 +37,7 @@ oo::define App method show {} {
 oo::define App method on_startup {} {
     set Wldb [Wld new $Tree $::APPPATH/Wishlists.wld]
     focus $Tree
-    select_tree_item $Tree
+    $Wldb select_item
 }
 
 oo::define App method make_ui {} {

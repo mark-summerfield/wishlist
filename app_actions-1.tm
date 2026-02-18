@@ -31,28 +31,20 @@ oo::define App method on_quit {} {
 }
 
 oo::define App method on_user_new {} {
-    puts on_user_new ; return ;# TODO
     if {[set name [EntryForm show "New User — [tk appname]" \
-            "Enter a name for a new user" [$Wldb user_names 1]]] \
+            "Enter a new user’s name" [$Wldb usernames 1]]] \
             ne ""} {
-        set cid [$Wldb user_insert $name]
-        my populate
-        after idle [my select_user $cid]
+        $Wldb user_add $name
     }
 }
 
 oo::define App method on_user_rename {} {
-    puts on_user_rename ; return ;# TODO
-    set tcid [my get_tcid]
-    if {[string match C* $tcid]} {
-        set name [$Tree item $tcid -text]
+    if {[set uid [$Wldb get_user_id]] ne ""} {
+        set name [$Tree item $uid -text]
         if {[set name [EntryForm show "Rename User — [tk appname]" \
                 "Enter a new name for user\n“$name”" \
-                [$Wldb user_names 1] $name]] ne ""} {
-            set cid [string range $tcid 1 end]
-            $Wldb user_update $cid $name
-            my populate
-            after idle [my select_user $cid]
+                [$Wldb usernames 1] $name]] ne ""} {
+            $Wldb user_rename $uid $name
         }
     }
 }
@@ -250,11 +242,4 @@ oo::define App method on_wish_move_last {} {
 
 oo::define App method on_wish_delete {} {
     puts on_wish_delete ;# TODO
-}
-
-oo::define App method get_tcid {} {
-    if {[string match W* [set tcid [$Tree selection]]]} {
-        set tcid [$Tree parent $tcid]
-    }
-    return $tcid
 }

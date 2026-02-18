@@ -35,6 +35,7 @@ oo::define Wld method filename {} { return $Filename }
 oo::define Wld method load {} {
     classvariable U
     classvariable G
+    classvariable W
     $Tree delete [$Tree children {}]
     set prev_user ""
     set prev_group ""
@@ -50,16 +51,20 @@ oo::define Wld method load {} {
             set uid [$Tree insert {} end -id U[incr U] -text $user \
                     -open $open]
         }
-        if {$group eq "="} {
-            set group $prev_group
-        } else {
-            set prev_group $group
-            set gid [$Tree insert $uid end -id G[incr G] -text $group \
-                    -open $open]
+        if {$group ne ""} {
+            if {$group eq "="} {
+                set group $prev_group
+            } else {
+                set prev_group $group
+                set gid [$Tree insert $uid end -id G[incr G] -text $group \
+                        -open $open]
+            }
+            if {$wish ne ""} {
+                $Tree insert $gid end -id W[incr W] -text $wish \
+                    -values [list $note $id]
+            }
         }
-        $Tree insert $gid end -id W[incr W] -text $wish \
-            -values [list $note $id]
-            
+                
     }
     if {![llength [$Tree children {}]]} {
         my setup
@@ -78,27 +83,19 @@ oo::define Wld method save {} {
     set out [open $Filename w]
     puts $out "Open\tUser\tGroup\tWish\tNote\tID"
     try {
-        set in_user 0
         foreach user [$Tree children {}] {
-            set in_group 0
+            set open [$Tree item $user -open]
+            set text [$Tree item $user -text]
+            puts $out $open\t$text
             foreach group [$Tree children $user] {
+                set open [$Tree item $group -open]
+                set text [$Tree item $group -text]
+                puts $out $open\t=\t$text
                 foreach wish [$Tree children $group] {
-                    if $in_user {
-                        set uname =
-                    } else {
-                        set uname $user
-                        set in_user 0
-                    }
-                    if $in_group {
-                        set gname =
-                    } else {
-                        set gname $group
-                        set in_group 0
-                    }
                     set open [$Tree item $wish -open]
                     set text [$Tree item $wish -text]
                     lassign [$Tree item $wish -values] note id
-                    puts $out $open\t$uname\t$gname\t$text\t$note\t$id
+                    puts $out $open\t=\t=\t$text\t$note\t$id
                 }
             }
         }
@@ -106,3 +103,53 @@ oo::define Wld method save {} {
         close $out
     }
 }
+
+oo::define Wld method select_item {{id {}}} {
+    set children [$Tree children {}]
+    if {[llength $children]} {
+        if {$id eq {} || ![$Tree exists $id]} {
+            set id [lindex $children 0]
+        }
+        $Tree selection set $id
+        $Tree see $id
+        $Tree focus $id
+    }
+}
+
+oo::define Wld method get_user_id {} {
+    set tid [$Tree selection]
+    if {[string match U* $tid]} { return $tid }
+    set tid [$Tree parent $tid] ;# selected is Group or Wish
+    if {[string match U* $tid]} { return $tid }
+    $Tree parent $tid ;# selected is Wish
+}
+
+oo::define Wld method get_group_id {} {
+    set tid [$Tree selection]
+    if {[string match U* $tid]} { return "" } ;# No Group selected
+    if {[string match G* $tid]} { return $tid }
+    $Tree parent $tid ;# selected is Wish
+}
+
+oo::define Wld method get_wish_id {} {
+    set tid [$Tree selection]
+    if {[string match W* $tid]} { return $tid }
+    return "" ;# No Wish selected
+}
+
+oo::define Wld method usernames {{casefold 0}} {
+    set usernames [list]
+    foreach user [$Tree children {}] {
+        set name [$Tree item $user -text]
+        if {$casefold} { set name [string tolower $name] }
+        lappend usernames $name
+    }
+    return $usernames
+}
+
+oo::define Wld method user_add user {
+    classvariable U
+    my select_item [$Tree insert {} end -id U[incr U] -text $user]
+}
+
+oo::define Wld method user_rename {uid user} { $Tree item $uid -text $user }
