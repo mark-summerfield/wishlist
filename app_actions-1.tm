@@ -50,47 +50,31 @@ oo::define App method on_user_rename {} {
 }
 
 oo::define App method on_user_move_first {} {
-    puts on_user_move_first ; return ;# TODO
-    if {[set tcid [my get_tcid]] ne ""} {
-        set cid [string range $tcid 1 end]
-        $Wldb user_move_first $cid
-        my populate
-        after idle [my select_user $cid]
+    if {[set uid [$Wldb get_user_id]] ne ""} {
+        $Wldb user_move_first $uid
     }
 }
 
 oo::define App method on_user_move_up {} {
-    puts on_user_move_up ; return ;# TODO
-    if {[set tcid [my get_tcid]] ne ""} {
-        set cid [string range $tcid 1 end]
-        $Wldb user_move_up $cid
-        my populate
-        after idle [my select_user $cid]
+    if {[set uid [$Wldb get_user_id]] ne ""} {
+        $Wldb user_move_up $uid
     }
 }
 
 oo::define App method on_user_move_down {} {
-    puts on_user_move_down ; return ;# TODO
-    if {[set tcid [my get_tcid]] ne ""} {
-        set cid [string range $tcid 1 end]
-        $Wldb user_move_down $cid
-        my populate
-        after idle [my select_user $cid]
+    if {[set uid [$Wldb get_user_id]] ne ""} {
+        $Wldb user_move_down $uid
     }
 }
 
 oo::define App method on_user_move_last {} {
-    puts on_user_move_last ; return ;# TODO
-    if {[set tcid [my get_tcid]] ne ""} {
-        set cid [string range $tcid 1 end]
-        $Wldb user_move_last $cid
-        my populate
-        after idle [my select_user $cid]
+    if {[set uid [$Wldb get_user_id]] ne ""} {
+        $Wldb user_move_last $uid
     }
 }
 
 oo::define App method on_user_delete {} {
-    puts on_user_delete ; return ;# TODO
+    puts on_user_delete ; return ;# TODO DONT PERMIT IF NONEMPY
     if {[$Wldb user_count] == 1} {
         MessageForm show "Delete User — [tk appname]" \
             "Cannot delete the last user." OK warning

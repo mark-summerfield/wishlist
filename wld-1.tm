@@ -153,3 +153,21 @@ oo::define Wld method user_add user {
 }
 
 oo::define Wld method user_rename {uid user} { $Tree item $uid -text $user }
+
+oo::define Wld method user_move_first uid { $Tree move $uid {} 0 }
+
+oo::define Wld method user_move_up uid {
+    if {[set prev [$Tree prev $uid]] ne {}} {
+        $Tree move $uid {} [$Tree index $prev]
+    }
+}
+
+oo::define Wld method user_move_down uid {
+    if {[set next [$Tree next $uid]] ne {}} {
+        $Tree move $uid {} [$Tree index $next]
+    }
+}
+
+oo::define Wld method user_move_last uid { $Tree move $uid {} end }
+
+# TODO NOTE: for Group & Wish moves the parent is *not* {} so must be set!
