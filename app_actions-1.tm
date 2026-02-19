@@ -32,7 +32,7 @@ oo::define App method on_quit {} {
 
 oo::define App method on_user_new {} {
     if {[set name [EntryForm show "New User — [tk appname]" \
-            "Enter a new user’s name" [$Wldb usernames 1]]] \
+            "Enter a new user’s name" [$Wldb user_names 1]]] \
             ne ""} {
         $Wldb user_add $name
     }
@@ -43,7 +43,7 @@ oo::define App method on_user_rename {} {
         set name [$Tree item $uid -text]
         if {[set name [EntryForm show "Rename User — [tk appname]" \
                 "Enter a new name for user\n“$name”" \
-                [$Wldb usernames 1] $name]] ne ""} {
+                [$Wldb user_names 1] $name]] ne ""} {
             $Wldb user_rename $uid $name
         }
     }
@@ -74,27 +74,17 @@ oo::define App method on_user_move_last {} {
 }
 
 oo::define App method on_user_delete {} {
-    puts on_user_delete ; return ;# TODO DONT PERMIT IF NONEMPY
-    if {[$Wldb user_count] == 1} {
-        MessageForm show "Delete User — [tk appname]" \
-            "Cannot delete the last user." OK warning
-        return
-    }
-    set tcid [my get_tcid]
-    if {[string match C* $tcid]} {
-        set cid [string range $tcid 1 end]
-        if {[$Wldb wishes_in_user $cid]} {
+    if {[set uid [$Wldb get_user_id]] ne ""} {
+        set name [$Wldb get_item_text $uid]
+        if {[set n [$Wldb user_child_count $uid]]} {
             MessageForm show "Delete User — [tk appname]" \
-                "Cannot delete a nonempty user;
-                delete its wishes first." OK warning
-            return
-        }
-        set body "Delete user\n“[$Wldb user_name $cid]”?"
-        if {[YesNoForm show "Delete User — [tk appname]" $body no] \
-                eq "yes"} {
-            $Wldb user_delete $cid
-            my populate
-            after idle [list select_tree_item $Tree]
+                "Cannot delete user “$name”.\nDelete all their Groups\
+                first." OK warning
+        } else {
+            if {[YesNoForm show "Delete User — [tk appname]" \
+                    "Delete user “$name”?" no] eq "yes"} {
+                $Wldb user_delete $uid
+            }
         }
     }
 }
@@ -166,6 +156,10 @@ oo::define App method on_group_move_last {} {
     }
 }
 
+oo::define App method on_group_move_to_user {} {
+    puts on_group_move_to_user ;# TODO
+}
+
 oo::define App method on_group_delete {} {
     puts on_group_delete ; return ;# TODO
     if {[$Wldb group_count] == 1} {
@@ -222,6 +216,10 @@ oo::define App method on_wish_move_down {} {
 
 oo::define App method on_wish_move_last {} {
     puts on_wish_move_last ;# TODO
+}
+
+oo::define App method on_wish_move_to_user_group {} {
+    puts on_wish_move_to_user_group ;# TODO
 }
 
 oo::define App method on_wish_delete {} {

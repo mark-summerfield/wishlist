@@ -116,6 +116,13 @@ oo::define Wld method select_item {{id {}}} {
     }
 }
 
+oo::define Wld method get_prev_or_next_of tid {
+    if {[set id [$Tree prev $tid]] eq {}} {
+        set id [$Tree next $tid]
+    }
+    return $id
+}
+
 oo::define Wld method get_user_id {} {
     set tid [$Tree selection]
     if {[string match U* $tid]} { return $tid }
@@ -137,7 +144,9 @@ oo::define Wld method get_wish_id {} {
     return "" ;# No Wish selected
 }
 
-oo::define Wld method usernames {{casefold 0}} {
+oo::define Wld method get_item_text iid { $Tree item $iid -text }
+
+oo::define Wld method user_names {{casefold 0}} {
     set usernames [list]
     foreach user [$Tree children {}] {
         set name [$Tree item $user -text]
@@ -146,6 +155,8 @@ oo::define Wld method usernames {{casefold 0}} {
     }
     return $usernames
 }
+
+oo::define Wld method user_child_count uid { llength [$Tree children $uid] }
 
 oo::define Wld method user_add user {
     classvariable U
@@ -169,5 +180,11 @@ oo::define Wld method user_move_down uid {
 }
 
 oo::define Wld method user_move_last uid { $Tree move $uid {} end }
+
+oo::define Wld method user_delete uid {
+    set id [my get_prev_or_next_of $uid]
+    $Tree delete $uid
+    my select_item $id
+}
 
 # TODO NOTE: for Group & Wish moves the parent is *not* {} so must be set!

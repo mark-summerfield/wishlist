@@ -5,9 +5,19 @@ package require tooltip 2
 const ::TOOLBAR_FRAME_OPTS "-relief ridge -borderwidth 3"
 
 oo::define App method make_toolbars {} {
+    my make_file_toolbar
     my make_user_toolbar
     my make_group_toolbar
     my make_wish_toolbar
+}
+
+oo::define App method make_file_toolbar {} {
+    set tip tooltip::tooltip
+    ttk::frame .mf.tb.ff1 {*}$::TOOLBAR_FRAME_OPTS
+    ttk::button .mf.tb.ff1.file_save -style Toolbutton \
+        -command [callback on_file_save] \
+        -image [ui::icon document-save.svg $::ICON_SIZE]
+    $tip .mf.tb.ff1.file_save "File Save"
 }
 
 oo::define App method make_user_toolbar {} {
@@ -68,6 +78,10 @@ oo::define App method make_group_toolbar {} {
         -command [callback on_group_move_last] \
         -image [ui::icon go-bottom.svg $::ICON_SIZE]
     $tip .mf.tb.cf2.group_move_bottom "Group Move to Last"
+    ttk::button .mf.tb.cf2.group_move_to_user -style Toolbutton \
+        -command [callback on_group_move_to_user] \
+        -image [ui::icon group-moveto.svg $::ICON_SIZE]
+    $tip .mf.tb.cf2.group_move_to_user "Group Move to User"
 }
 
 oo::define App method make_wish_toolbar {} {
@@ -106,17 +120,25 @@ oo::define App method make_wish_toolbar {} {
         -command [callback on_wish_move_last] \
         -image [ui::icon wish-go-bottom.svg $::ICON_SIZE]
     $tip .mf.tb.wf2.wish_move_bottom "Wish Move to Last"
+    ttk::button .mf.tb.wf2.wish_move_to_user -style Toolbutton \
+        -command [callback on_wish_move_to_user_group] \
+        -image [ui::icon wish-moveto.svg $::ICON_SIZE]
+    $tip .mf.tb.wf2.wish_move_to_user "Wish Move to User/Group"
 }
 
 oo::define App method make_toolbar_layout {} {
+    my make_file_toolbar_layout
     my make_user_toolbar_layout
     my make_group_toolbar_layout
     my make_wish_toolbar_layout
 }
 
+oo::define App method make_file_toolbar_layout {} {
+    pack .mf.tb.ff1 -side left
+    pack .mf.tb.ff1.file_save -side left
+}
+
 oo::define App method make_user_toolbar_layout {} {
-    const OPTS "-pady 3 -padx 3"
-    set n 0
     pack .mf.tb.uf1 -side left
     pack .mf.tb.uf1.user_new -side left
     pack .mf.tb.uf1.user_rename -side left
@@ -128,8 +150,6 @@ oo::define App method make_user_toolbar_layout {} {
 }
 
 oo::define App method make_group_toolbar_layout {} {
-    const OPTS "-pady 3 -padx 3"
-    set n 0
     pack .mf.tb.cf1 -side left
     pack .mf.tb.cf1.group_new -side left
     pack .mf.tb.cf1.group_rename -side left
@@ -138,6 +158,7 @@ oo::define App method make_group_toolbar_layout {} {
     pack .mf.tb.cf2.group_move_up -side left
     pack .mf.tb.cf2.group_move_down -side left
     pack .mf.tb.cf2.group_move_bottom -side left
+    pack .mf.tb.cf2.group_move_to_user -side left
 }
 
 oo::define App method make_wish_toolbar_layout {} {
@@ -153,4 +174,5 @@ oo::define App method make_wish_toolbar_layout {} {
     pack .mf.tb.wf2.wish_move_up -side left
     pack .mf.tb.wf2.wish_move_down -side left
     pack .mf.tb.wf2.wish_move_bottom -side left
+    pack .mf.tb.wf2.wish_move_to_user -side left
 }
