@@ -69,6 +69,7 @@ oo::define Wld method load {} {
     if {![llength [$Tree children {}]]} {
         my setup
     }
+    my resize_columns
 }
 
 oo::define Wld method setup {} {
@@ -77,6 +78,11 @@ oo::define Wld method setup {} {
     set user [textutil::string::cap $::tcl_platform(user)]
     set uid [$Tree insert {} end -id U[incr U] -text $user -open 1]
     set gid [$Tree insert $uid end -id G[incr G] -text Fiction]
+    my resize_columns
+}
+
+oo::define Wld method resize_columns {} {
+    puts resize_columns ;# TODO
 }
 
 oo::define Wld method save {} {
