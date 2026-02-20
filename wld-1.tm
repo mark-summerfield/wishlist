@@ -28,9 +28,9 @@ oo::define Wld constructor {tree filename} {
 
 oo::define Wld destructor { my save }
 
-oo::define Wld method tree {} { return $Tree }
+oo::define Wld method tree {} { set Tree }
 
-oo::define Wld method filename {} { return $Filename }
+oo::define Wld method filename {} { set Filename }
 
 oo::define Wld method load {} {
     classvariable U
@@ -126,7 +126,7 @@ oo::define Wld method get_prev_or_next_of tid {
     if {[set id [$Tree prev $tid]] eq {}} {
         set id [$Tree next $tid]
     }
-    return $id
+    set id
 }
 
 oo::define Wld method get_user_id {} {
@@ -159,7 +159,7 @@ oo::define Wld method user_names {{casefold 0}} {
         if {$casefold} { set name [string tolower $name] }
         lappend usernames $name
     }
-    return $usernames
+    set usernames
 }
 
 oo::define Wld method user_child_count uid { llength [$Tree children $uid] }
