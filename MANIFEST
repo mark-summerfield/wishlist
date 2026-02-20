@@ -21,8 +21,6 @@ message_form-1.tm
 yes_no_form-1.tm
 ui-1.tm
 
-db-1.tm
-
 st.sh
 
 # For each item lookup:
