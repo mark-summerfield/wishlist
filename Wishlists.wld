@@ -8,11 +8,11 @@ true	Mark
 0	=	Long Shots
 0	=	CDs & DVDs
 0	=	Birthday
-1	Andrea
+true	Andrea
 0	=	Books
 0	=	CDs & DVDs
 0	=	Birthday
-1	Us
+false	Us
 0	=	Off Quota
 0	=	Domestic
 0	=	Xmas
