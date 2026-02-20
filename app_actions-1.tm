@@ -101,7 +101,7 @@ oo::define App method on_group_new {} {
 
 oo::define App method on_group_rename {} {
     if {[set gid [$Wldb get_group_id]] ne ""} {
-        set name [$Tree item $gid -text]
+        set name [$Wldb get_item_text $gid]
         if {[set name [EntryForm show "Rename Group — [tk appname]" \
                 "Enter a new name for group\n“$name”" \
                 [$Wldb group_names [$Tree parent $gid] 1] $name]] ne ""} {
@@ -135,31 +135,30 @@ oo::define App method on_group_move_last {} {
 }
 
 oo::define App method on_group_move_to_user {} {
+    if {[set gid [$Wldb get_group_id]] ne ""} {
+        lassign [$Wldb get_group_user $gid] uid user
+        puts "uid=$uid user=$user gid=$gid"
+        # TODO choose User to move to from list of users excluding this
+        # user
+    }
+    # TODO if user already has a group of this name, then move any
+    # wishes from this group to that group (excluding any already there);
+    # otherwise just move this group to that user
     puts on_group_move_to_user ;# TODO
 }
 
 oo::define App method on_group_delete {} {
-    puts on_group_delete ; return ;# TODO
-    if {[$Wldb group_count] == 1} {
-        MessageForm show "Delete Group — [tk appname]" \
-            "Cannot delete the last group." OK warning
-        return
-    }
-    set tcid [my get_tcid]
-    if {[string match C* $tcid]} {
-        set cid [string range $tcid 1 end]
-        if {[$Wldb wishes_in_group $cid]} {
+    if {[set gid [$Wldb get_group_id]] ne ""} {
+        set name [$Wldb get_item_text $gid]
+        if {[set n [$Wldb group_child_count $gid]]} {
             MessageForm show "Delete Group — [tk appname]" \
-                "Cannot delete a nonempty group;
-                delete its wishes first." OK warning
-            return
-        }
-        set body "Delete group\n“[$Wldb group_name $cid]”?"
-        if {[YesNoForm show "Delete Group — [tk appname]" $body no] \
-                eq "yes"} {
-            $Wldb group_delete $cid
-            my populate
-            after idle [list select_tree_item $Tree]
+                "Cannot delete group “$name”.\nDelete all their Wishes\
+                first." OK warning
+        } else {
+            if {[YesNoForm show "Delete Group — [tk appname]" \
+                    "Delete group “$name”?" no] eq "yes"} {
+                $Wldb group_delete $gid
+            }
         }
     }
 }
