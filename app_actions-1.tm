@@ -32,8 +32,7 @@ oo::define App method on_quit {} {
 
 oo::define App method on_user_new {} {
     if {[set name [EntryForm show "New User — [tk appname]" \
-            "Enter a new user’s name" [$Wldb user_names 1]]] \
-            ne ""} {
+            "Enter a new user’s name" [$Wldb user_names 1]]] ne ""} {
         $Wldb user_add $name
     }
 }
@@ -90,69 +89,48 @@ oo::define App method on_user_delete {} {
 }
 
 oo::define App method on_group_new {} {
-    puts on_group_new ; return ;# TODO
-    if {[set name [EntryForm show "New Group — [tk appname]" \
-            "Enter a name for a new group" [$Wldb group_names 1]]] \
-            ne ""} {
-        set cid [$Wldb group_insert $name]
-        my populate
-        after idle [my select_group $cid]
+    if {[set uid [$Wldb get_user_id]] ne ""} {
+        set user [$Tree item $uid -text]
+        if {[set name [EntryForm show "New Group — [tk appname]" \
+                "Enter a new group name for user\n“$user”" \
+                [$Wldb group_names $uid 1]]] ne ""} {
+            $Wldb group_add $uid $name
+        }
     }
 }
 
 oo::define App method on_group_rename {} {
-    puts on_group_rename ; return ;# TODO
-    set tcid [my get_tcid]
-    if {[string match C* $tcid]} {
-        set name [$Tree item $tcid -text]
+    if {[set gid [$Wldb get_group_id]] ne ""} {
+        set name [$Tree item $gid -text]
         if {[set name [EntryForm show "Rename Group — [tk appname]" \
                 "Enter a new name for group\n“$name”" \
-                [$Wldb group_names 1] $name]] ne ""} {
-            set cid [string range $tcid 1 end]
-            $Wldb group_update $cid $name
-            my populate
-            after idle [my select_group $cid]
+                [$Wldb group_names [$Tree parent $gid] 1] $name]] ne ""} {
+            $Wldb group_rename $gid $name
         }
     }
 }
 
 oo::define App method on_group_move_first {} {
-    puts on_group_move_first ; return ;# TODO
-    if {[set tcid [my get_tcid]] ne ""} {
-        set cid [string range $tcid 1 end]
-        $Wldb group_move_first $cid
-        my populate
-        after idle [my select_group $cid]
+    if {[set gid [$Wldb get_group_id]] ne ""} {
+        $Wldb group_move_first $gid
     }
 }
 
 oo::define App method on_group_move_up {} {
-    puts on_group_move_up ; return ;# TODO
-    if {[set tcid [my get_tcid]] ne ""} {
-        set cid [string range $tcid 1 end]
-        $Wldb group_move_up $cid
-        my populate
-        after idle [my select_group $cid]
+    if {[set gid [$Wldb get_group_id]] ne ""} {
+        $Wldb group_move_up $gid
     }
 }
 
 oo::define App method on_group_move_down {} {
-    puts on_group_move_down ; return ;# TODO
-    if {[set tcid [my get_tcid]] ne ""} {
-        set cid [string range $tcid 1 end]
-        $Wldb group_move_down $cid
-        my populate
-        after idle [my select_group $cid]
+    if {[set gid [$Wldb get_group_id]] ne ""} {
+        $Wldb group_move_down $gid
     }
 }
 
 oo::define App method on_group_move_last {} {
-    puts on_group_move_last ; return ;# TODO
-    if {[set tcid [my get_tcid]] ne ""} {
-        set cid [string range $tcid 1 end]
-        $Wldb group_move_last $cid
-        my populate
-        after idle [my select_group $cid]
+    if {[set gid [$Wldb get_group_id]] ne ""} {
+        $Wldb group_move_last $gid
     }
 }
 

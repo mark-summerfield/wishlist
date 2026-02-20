@@ -193,4 +193,43 @@ oo::define Wld method user_delete uid {
     my select_item $id
 }
 
+oo::define Wld method group_names {uid {casefold 0}} {
+    set group_names [list]
+    foreach gid [$Tree children $uid] {
+        set name [$Tree item $gid -text]
+        if {$casefold} { set name [string tolower $name] }
+        lappend group_names $name
+    }
+    set group_names
+}
+
+oo::define Wld method group_add {uid name} {
+    classvariable G
+    my select_item [$Tree insert $uid end -id G[incr G] -text $name]
+}
+
+oo::define Wld method group_rename {gid name} {
+    $Tree item $gid -text $name
+}
+
+oo::define Wld method group_move_first gid {
+    $Tree move $gid [$Tree parent $gid] 0
+}
+
+oo::define Wld method group_move_up gid {
+    if {[set prev [$Tree prev $gid]] ne {}} {
+        $Tree move $gid [$Tree parent $gid] [$Tree index $prev]
+    }
+}
+
+oo::define Wld method group_move_down gid {
+    if {[set next [$Tree next $gid]] ne {}} {
+        $Tree move $gid [$Tree parent $gid] [$Tree index $next]
+    }
+}
+
+oo::define Wld method group_move_last gid {
+    $Tree move $gid [$Tree parent $gid] end
+}
+
 # TODO NOTE: for Group & Wish moves the parent is *not* {} so must be set!

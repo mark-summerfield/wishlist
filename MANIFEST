@@ -30,22 +30,4 @@ st.sh
 #	    browser page so I get to see the prices in each one.
 #	Otherwise use the ID or name for a generic duckduckgo search
 
-# Mark
-#   Fiction
-#   Tech
-#   Bio
-#   History
-#   Non-Fiction
-#   Long Shots
-#   CD/DVDs
-#   Birthday
-# Andrea
-#   Books
-#   CD/DVDs
-#   Birthday
-# Both
-#   Off Quota
-#   Domestic
-#   Xmas
-
 # vim: syn=yaml
