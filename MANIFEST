@@ -4,7 +4,7 @@ app_menus-1.tm
 app_toolbars-1.tm
 app_actions-1.tm # TODO
 config-1.tm
-config_form-1.tm
+config_form-1.tm # TODO (1) show Wishlists.wld file like Wishlists.ini
 wld-1.tm # TODO
 
 message_form-1.tm
