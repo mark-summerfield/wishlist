@@ -2,6 +2,7 @@
 
 package require entry_form
 package require message_form
+package require list_pick_form
 package require yes_no_form
 
 oo::define App method on_file_save {} { $Wldb save }
@@ -136,8 +137,14 @@ oo::define App method on_group_move_last {} {
 
 oo::define App method on_group_move_to_user {} {
     if {[set gid [$Wldb get_group_id]] ne ""} {
+        set group [$Wldb get_item_text $gid]
         lassign [$Wldb get_group_user $gid] uid user
-        puts "uid=$uid user=$user gid=$gid"
+        set users [list] ;# TODO list of users
+        if {[set new_user [ListPickForm show "Pick User — [tk appname]" \
+                "Pick the user to move group\n“$group” to:" $users]] \
+                ne ""} {
+            puts "uid=$uid user=$user gid=$gid"
+        }
         # TODO choose User to move to from list of users excluding this
         # user
     }

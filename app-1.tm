@@ -35,7 +35,7 @@ oo::define App method show {} {
 }
 
 oo::define App method on_startup {} {
-    set Wldb [Wld new $Tree $::APPPATH/Wishlists.wld]
+    set Wldb [Wld new $Tree $::WISH_FILE]
     focus $Tree
     $Wldb select_item
 }

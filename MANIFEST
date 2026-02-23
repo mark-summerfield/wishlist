@@ -4,11 +4,12 @@ app_menus-1.tm
 app_toolbars-1.tm
 app_actions-1.tm # TODO
 config-1.tm
-config_form-1.tm # TODO (1) show Wishlists.wld file like Wishlists.ini
+config_form-1.tm
 wld-1.tm # TODO
 
 message_form-1.tm
 entry_form-1.tm
+list_pick_form-1.tm # TODO copy to ../xskel once working
 
 ref-1.tm
 util-1.tm

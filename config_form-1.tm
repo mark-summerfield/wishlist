@@ -55,6 +55,10 @@ oo::define ConfigForm method make_widgets {} {
         application’s scale (and restart) first."
     ttk::label .configForm.mf.fontLabel -relief sunken \
         -text "[$config family] [$config size]"
+    ttk::label .configForm.mf.wishFileLabel -foreground gray25 \
+        -text "Wishlists file"
+    ttk::label .configForm.mf.wishFilenameLabel -foreground gray25 \
+        -text $::WISH_FILE -relief sunken
     ttk::label .configForm.mf.configFileLabel -foreground gray25 \
         -text "Config file"
     ttk::label .configForm.mf.configFilenameLabel -foreground gray25 \
@@ -77,6 +81,10 @@ oo::define ConfigForm method make_layout {} {
     grid .configForm.mf.fontLabel -row 1 -column 1 -columnspan 2 \
         -sticky news {*}$opts
     grid .configForm.mf.blinkCheckbutton -row 2 -column 1 -sticky we
+    grid .configForm.mf.wishFileLabel -row 7 -column 0 -sticky we \
+        {*}$opts
+    grid .configForm.mf.wishFilenameLabel -row 7 -column 1 \
+        -columnspan 2 -sticky we {*}$opts
     grid .configForm.mf.configFileLabel -row 8 -column 0 -sticky we \
         {*}$opts
     grid .configForm.mf.configFilenameLabel -row 8 -column 1 \
