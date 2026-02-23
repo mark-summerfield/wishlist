@@ -9,7 +9,7 @@ wld-1.tm # TODO
 
 message_form-1.tm
 entry_form-1.tm
-list_pick_form-1.tm # TODO copy to ../xskel once working
+list_pick_form-1.tm
 
 ref-1.tm
 util-1.tm

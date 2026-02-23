@@ -24,7 +24,7 @@ oo::define ListPickForm constructor {reply title body_text lst} {
     my make_layout
     my make_bindings
     next .list_pick_form [callback on_cancel]
-    my show_modal ;# TODO combobox
+    my show_modal .list_pick_form.mf.combobox
 }
 
 oo::define ListPickForm method make_widgets {title body_text lst} {
@@ -40,7 +40,8 @@ oo::define ListPickForm method make_widgets {title body_text lst} {
     ttk::label .list_pick_form.mf.label -text $body_text -anchor center \
         -compound left -padding 3 \
         -image [ui::icon help.svg [expr {2 * $::ICON_SIZE}]]
-    # TODO combobox
+    ttk::combobox .list_pick_form.mf.combobox -values $lst -state readonly
+    .list_pick_form.mf.combobox set [lindex $lst 0]
     ttk::button .list_pick_form.mf.ok_button -text OK -underline 0 \
         -command [callback on_ok] -compound left \
         -image [ui::icon ok.svg $size]
@@ -53,10 +54,13 @@ oo::define ListPickForm method make_layout {} {
     set opts "-padx 3 -pady 3"
     grid .list_pick_form.mf.label -row 0 -column 0 -columnspan 2 \
         -sticky news {*}$opts
-    # TODO combobox
-    grid .list_pick_form.mf.ok_button -row 1 -column 0 -sticky e {*}$opts
-    grid .list_pick_form.mf.cancel_button -row 1 -column 1 -sticky w {*}$opts
+    grid .list_pick_form.mf.combobox -row 1 -column 0 -columnspan 2 \
+        -sticky news {*}$opts
+    grid .list_pick_form.mf.ok_button -row 2 -column 0 -sticky e {*}$opts
+    grid .list_pick_form.mf.cancel_button -row 2 -column 1 -sticky w \
+        {*}$opts
     grid rowconfigure .list_pick_form 0 -weight 1
+    grid rowconfigure .list_pick_form 1 -weight 1
     grid columnconfigure .list_pick_form 0 -weight 1
     grid columnconfigure .list_pick_form 1 -weight 1
     pack .list_pick_form.mf -fill both -expand 1
@@ -72,7 +76,7 @@ oo::define ListPickForm method make_bindings {} {
 }
 
 oo::define ListPickForm method on_ok {} {
-    set Reply ;# to chosen list item
+    $Reply set [.list_pick_form.mf.combobox get]
     my delete
 }
 

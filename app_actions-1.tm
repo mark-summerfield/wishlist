@@ -139,19 +139,29 @@ oo::define App method on_group_move_to_user {} {
     if {[set gid [$Wldb get_group_id]] ne ""} {
         set group [$Wldb get_item_text $gid]
         lassign [$Wldb get_group_user $gid] uid user
-        set users [list] ;# TODO list of users
-        if {[set new_user [ListPickForm show "Pick User — [tk appname]" \
-                "Pick the user to move group\n“$group” to:" $users]] \
-                ne ""} {
-            puts "uid=$uid user=$user gid=$gid"
+        set users [$Wldb user_names]
+        if {[set i [lsearch -nocase $users $user]] > -1} {
+            set users [lremove $users $i]
         }
-        # TODO choose User to move to from list of users excluding this
-        # user
+        if {![llength $users]} {
+            MessageForm show "Move Group to User — [tk appname]" \
+                "Cannot move group\n“$group”\nto another user, since\
+                there is no other user to move it to." OK warning
+        } else {
+            if {[set new_user [ListPickForm show \
+                    "Pick User — [tk appname]" \
+                    "Move user\n“$user”’s\n“$group”\ngroup to:" $users]] \
+                    ne ""} {
+                # TODO
+                # if user already has a group of this name, then
+                #       move any wishes from this group to that group
+                #       (excluding any already there);
+                # otherwise
+                #       just move this group to that user
+                puts "uid=$uid user=$user gid=$gid new_user=$new_user"
+            }
+        }
     }
-    # TODO if user already has a group of this name, then move any
-    # wishes from this group to that group (excluding any already there);
-    # otherwise just move this group to that user
-    puts on_group_move_to_user ;# TODO
 }
 
 oo::define App method on_group_delete {} {
