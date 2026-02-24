@@ -122,14 +122,28 @@ oo::define Wld method select_item {{id {}}} {
     }
 }
 
-oo::define Wld method get_prev_or_next_of tid {
+oo::define Wld method prev_or_next_of tid {
     if {[set id [$Tree prev $tid]] eq {}} {
         set id [$Tree next $tid]
     }
     set id
 }
 
-oo::define Wld method get_user_id {} {
+oo::define Wld method user_id_for_name user {
+    foreach uid [$Tree children {}] {
+        set name [my item_text $uid]
+        if {[string equal -nocase $name $user]} { return $uid }
+    }
+}
+
+oo::define Wld method group_id_for_name {uid group} {
+    foreach gid [$Tree children $uid] {
+        set name [my item_text $gid]
+        if {[string equal -nocase $name $group]} { return $gid }
+    }
+}
+
+oo::define Wld method user_id {} {
     set tid [$Tree selection]
     if {[string match U* $tid]} { return $tid }
     set tid [$Tree parent $tid] ;# selected is Group or Wish
@@ -137,22 +151,22 @@ oo::define Wld method get_user_id {} {
     $Tree parent $tid ;# selected is Wish
 }
 
-oo::define Wld method get_group_id {} {
+oo::define Wld method group_id {} {
     set tid [$Tree selection]
     if {[string match U* $tid]} { return "" } ;# No Group selected
     if {[string match G* $tid]} { return $tid }
     $Tree parent $tid ;# selected is Wish
 }
 
-oo::define Wld method get_wish_id {} {
+oo::define Wld method wish_id {} {
     set tid [$Tree selection]
     if {[string match W* $tid]} { return $tid }
     return "" ;# No Wish selected
 }
 
-oo::define Wld method get_item_text iid { $Tree item $iid -text }
+oo::define Wld method item_text iid { $Tree item $iid -text }
 
-oo::define Wld method get_group_user gid {
+oo::define Wld method group_user gid {
     set uid [$Tree parent $gid]
     list $uid [$Tree item $uid -text]
 }
@@ -193,7 +207,7 @@ oo::define Wld method user_move_down uid {
 oo::define Wld method user_move_last uid { $Tree move $uid {} end }
 
 oo::define Wld method user_delete uid {
-    set id [my get_prev_or_next_of $uid]
+    set id [my prev_or_next_of $uid]
     $Tree delete $uid
     my select_item $id
 }
@@ -241,8 +255,19 @@ oo::define Wld method group_move_last gid {
     $Tree move $gid [$Tree parent $gid] end
 }
 
+oo::define Wld method group_move_to_user {gid uid} {
+    $Tree move $gid $uid end
+}
+
+oo::define Wld method group_merge_to_user {old_gid gid uid} {
+    foreach wid [$Tree children $old_gid] {
+        $Tree move $wid $gid end
+    }
+    $Tree delete $old_gid
+}
+
 oo::define Wld method group_delete gid {
-    set id [my get_prev_or_next_of $gid]
+    set id [my prev_or_next_of $gid]
     $Tree delete $gid
     my select_item $id
 }

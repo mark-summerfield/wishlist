@@ -1,8 +1,8 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
 package require entry_form
-package require message_form
 package require list_pick_form
+package require message_form
 package require yes_no_form
 
 oo::define App method on_file_save {} { $Wldb save }
@@ -39,7 +39,7 @@ oo::define App method on_user_new {} {
 }
 
 oo::define App method on_user_rename {} {
-    if {[set uid [$Wldb get_user_id]] ne ""} {
+    if {[set uid [$Wldb user_id]] ne ""} {
         set name [$Tree item $uid -text]
         if {[set name [EntryForm show "Rename User — [tk appname]" \
                 "Enter a new name for user\n“$name”" \
@@ -50,32 +50,32 @@ oo::define App method on_user_rename {} {
 }
 
 oo::define App method on_user_move_first {} {
-    if {[set uid [$Wldb get_user_id]] ne ""} {
+    if {[set uid [$Wldb user_id]] ne ""} {
         $Wldb user_move_first $uid
     }
 }
 
 oo::define App method on_user_move_up {} {
-    if {[set uid [$Wldb get_user_id]] ne ""} {
+    if {[set uid [$Wldb user_id]] ne ""} {
         $Wldb user_move_up $uid
     }
 }
 
 oo::define App method on_user_move_down {} {
-    if {[set uid [$Wldb get_user_id]] ne ""} {
+    if {[set uid [$Wldb user_id]] ne ""} {
         $Wldb user_move_down $uid
     }
 }
 
 oo::define App method on_user_move_last {} {
-    if {[set uid [$Wldb get_user_id]] ne ""} {
+    if {[set uid [$Wldb user_id]] ne ""} {
         $Wldb user_move_last $uid
     }
 }
 
 oo::define App method on_user_delete {} {
-    if {[set uid [$Wldb get_user_id]] ne ""} {
-        set name [$Wldb get_item_text $uid]
+    if {[set uid [$Wldb user_id]] ne ""} {
+        set name [$Wldb item_text $uid]
         if {[set n [$Wldb user_child_count $uid]]} {
             MessageForm show "Delete User — [tk appname]" \
                 "Cannot delete user “$name”.\nDelete all their Groups\
@@ -90,7 +90,7 @@ oo::define App method on_user_delete {} {
 }
 
 oo::define App method on_group_new {} {
-    if {[set uid [$Wldb get_user_id]] ne ""} {
+    if {[set uid [$Wldb user_id]] ne ""} {
         set user [$Tree item $uid -text]
         if {[set name [EntryForm show "New Group — [tk appname]" \
                 "Enter a new group name for user\n“$user”" \
@@ -101,8 +101,8 @@ oo::define App method on_group_new {} {
 }
 
 oo::define App method on_group_rename {} {
-    if {[set gid [$Wldb get_group_id]] ne ""} {
-        set name [$Wldb get_item_text $gid]
+    if {[set gid [$Wldb group_id]] ne ""} {
+        set name [$Wldb item_text $gid]
         if {[set name [EntryForm show "Rename Group — [tk appname]" \
                 "Enter a new name for group\n“$name”" \
                 [$Wldb group_names [$Tree parent $gid] 1] $name]] ne ""} {
@@ -112,33 +112,33 @@ oo::define App method on_group_rename {} {
 }
 
 oo::define App method on_group_move_first {} {
-    if {[set gid [$Wldb get_group_id]] ne ""} {
+    if {[set gid [$Wldb group_id]] ne ""} {
         $Wldb group_move_first $gid
     }
 }
 
 oo::define App method on_group_move_up {} {
-    if {[set gid [$Wldb get_group_id]] ne ""} {
+    if {[set gid [$Wldb group_id]] ne ""} {
         $Wldb group_move_up $gid
     }
 }
 
 oo::define App method on_group_move_down {} {
-    if {[set gid [$Wldb get_group_id]] ne ""} {
+    if {[set gid [$Wldb group_id]] ne ""} {
         $Wldb group_move_down $gid
     }
 }
 
 oo::define App method on_group_move_last {} {
-    if {[set gid [$Wldb get_group_id]] ne ""} {
+    if {[set gid [$Wldb group_id]] ne ""} {
         $Wldb group_move_last $gid
     }
 }
 
 oo::define App method on_group_move_to_user {} {
-    if {[set gid [$Wldb get_group_id]] ne ""} {
-        set group [$Wldb get_item_text $gid]
-        lassign [$Wldb get_group_user $gid] uid user
+    if {[set gid [$Wldb group_id]] ne ""} {
+        set group [$Wldb item_text $gid]
+        lassign [$Wldb group_user $gid] uid user
         set users [$Wldb user_names]
         if {[set i [lsearch -nocase $users $user]] > -1} {
             set users [lremove $users $i]
@@ -152,21 +152,21 @@ oo::define App method on_group_move_to_user {} {
                     "Pick User — [tk appname]" \
                     "Move user\n“$user”’s\n“$group”\ngroup to:" $users]] \
                     ne ""} {
-                # TODO
-                # if user already has a group of this name, then
-                #       move any wishes from this group to that group
-                #       (excluding any already there);
-                # otherwise
-                #       just move this group to that user
-                puts "uid=$uid user=$user gid=$gid new_user=$new_user"
+                set new_uid [$Wldb user_id_for_name $new_user]
+                if {[set existing_gid [$Wldb group_id_for_name $new_uid \
+                        $group]] ne {}} {
+                    $Wldb group_merge_to_user $gid $existing_gid $new_uid
+                } else {
+                    $Wldb group_move_to_user $gid $new_uid
+                }
             }
         }
     }
 }
 
 oo::define App method on_group_delete {} {
-    if {[set gid [$Wldb get_group_id]] ne ""} {
-        set name [$Wldb get_item_text $gid]
+    if {[set gid [$Wldb group_id]] ne ""} {
+        set name [$Wldb item_text $gid]
         if {[set n [$Wldb group_child_count $gid]]} {
             MessageForm show "Delete Group — [tk appname]" \
                 "Cannot delete group “$name”.\nDelete all their Wishes\
@@ -183,6 +183,7 @@ oo::define App method on_group_delete {} {
 oo::define App method on_wish_new {} {
     puts on_wish_new ;# TODO
 }
+# TODO once I can create wishes retest on_group_move_to_user
 
 oo::define App method on_wish_edit {} {
     puts on_wish_edit ;# TODO
