@@ -85,14 +85,12 @@ oo::define App method make_tree {} {
     ui::apply_treeview_bindings $Tree
     $sa setwidget $Tree
     pack $sa -fill both -expand 1
-    $Tree column #0 -stretch 0
+    $Tree column #0 -stretch 1
     $Tree column 0 -stretch 1
-    $Tree column 1 -stretch 1
-    $Tree column 2 -stretch 0
-    $Tree heading #0 -text Group
-    $Tree heading 0 -text Name/Title
-    $Tree heading 1 -text Note
-    $Tree heading 2 -text ID/ISBN
+    $Tree column 1 -stretch 0
+    $Tree heading #0 -text User/Group/Wish
+    $Tree heading 0 -text Note
+    $Tree heading 1 -text ID/ISBN
 }
 
 oo::define App method make_layout {} {
