@@ -126,7 +126,7 @@ oo::define App method make_wish_toolbar {} {
     $tip .mf.tb.wf2.wish_move_to_user "Wish Move to User/Group"
 }
 
-oo::define App method make_toolbar_layout {} {
+oo::define App method make_toolbars_layout {} {
     my make_file_toolbar_layout
     my make_user_toolbar_layout
     my make_group_toolbar_layout
@@ -134,15 +134,12 @@ oo::define App method make_toolbar_layout {} {
 }
 
 oo::define App method make_file_toolbar_layout {} {
-    pack .mf.tb.ff1 -side left
     pack .mf.tb.ff1.file_save -side left
 }
 
 oo::define App method make_user_toolbar_layout {} {
-    pack .mf.tb.uf1 -side left
     pack .mf.tb.uf1.user_new -side left
     pack .mf.tb.uf1.user_rename -side left
-    pack .mf.tb.uf2 -side left
     pack .mf.tb.uf2.user_move_top -side left
     pack .mf.tb.uf2.user_move_up -side left
     pack .mf.tb.uf2.user_move_down -side left
@@ -150,10 +147,8 @@ oo::define App method make_user_toolbar_layout {} {
 }
 
 oo::define App method make_group_toolbar_layout {} {
-    pack .mf.tb.cf1 -side left
     pack .mf.tb.cf1.group_new -side left
     pack .mf.tb.cf1.group_rename -side left
-    pack .mf.tb.cf2 -side left
     pack .mf.tb.cf2.group_move_top -side left
     pack .mf.tb.cf2.group_move_up -side left
     pack .mf.tb.cf2.group_move_down -side left
@@ -164,15 +159,62 @@ oo::define App method make_group_toolbar_layout {} {
 oo::define App method make_wish_toolbar_layout {} {
     const OPTS "-pady 3 -padx 3"
     set n 0
-    pack .mf.tb.wf1 -side left
     pack .mf.tb.wf1.wish_new -side left
     pack .mf.tb.wf1.wish_edit -side left
     pack .mf.tb.wf1.wish_lookup -side left
     pack .mf.tb.wf1.wish_copy -side left
-    pack .mf.tb.wf2 -side left
     pack .mf.tb.wf2.wish_move_top -side left
     pack .mf.tb.wf2.wish_move_up -side left
     pack .mf.tb.wf2.wish_move_down -side left
     pack .mf.tb.wf2.wish_move_bottom -side left
     pack .mf.tb.wf2.wish_move_to_user -side left
 }
+
+oo::define App method refresh_toolbars {} {
+    set config [Config new]
+    set width [winfo width .mf.tb]
+    grid remove .mf.tb.ff1 .mf.tb.uf1 .mf.tb.uf2 .mf.tb.cf1 .mf.tb.cf2 \
+                .mf.tb.wf1 .mf.tb.wf2
+    set row 0
+    set column 0
+    set show_toolbars 0
+    if {[set show_file_toolbar [$config show_file_toolbar]]} {
+        my show_toolbar 1 .mf.tb.ff1 width column row
+        set show_toolbars 1
+    }
+    if {[set show_user_toolbar [$config show_user_toolbar]]} {
+        my show_toolbar 2 .mf.tb.uf1 width column row
+        my show_toolbar 4 .mf.tb.uf2 width column row
+        set show_toolbars 1
+    }
+    if {[set show_group_toolbar [$config show_group_toolbar]]} {
+        my show_toolbar 2 .mf.tb.cf1 width column row
+        my show_toolbar 4 .mf.tb.cf2 width column row
+        set show_toolbars 1
+    }
+    if {[set show_wish_toolbar [$config show_wish_toolbar]]} {
+        my show_toolbar 4 .mf.tb.wf1 width column row
+        my show_toolbar 4 .mf.tb.wf2 width column row
+        set show_toolbars 1
+    }
+    if {$show_toolbars} {
+        grid .mf.tb
+    } else {
+        grid remove .mf.tb
+    }
+}
+
+oo::define App method show_toolbar {colspan tb width column row} {
+    upvar 1 $width width_ $column column_ $row row_ 
+    set full_width [winfo width .mf.tb]
+    set rwidth [winfo reqwidth $tb]
+    if {$rwidth > $width_} {
+        set width_ $full_width
+        set column_ 0
+        incr row_
+    }
+    grid $tb -row $row_ -column $column_ -columnspan $colspan -sticky w
+    incr column_ $colspan
+    incr width_ -$rwidth
+}
+

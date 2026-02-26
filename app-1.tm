@@ -11,6 +11,8 @@ package require wld
 oo::singleton create App {
     variable Tree
     variable Wldb
+    variable ToolbarWidth
+    variable RefreshToolbarsId
 }
 
 package require app_actions
@@ -21,6 +23,8 @@ oo::define App constructor {} {
     ui::wishinit
     tk appname Wishlists
     Config new
+    set ToolbarWidth 0
+    set RefreshToolbarsId ""
     my make_fonts
     my make_ui
 }
@@ -35,6 +39,9 @@ oo::define App method show {} {
 }
 
 oo::define App method on_startup {} {
+    my refresh_toolbars
+    update
+    set ToolbarWidth [winfo width .mf.tb]
     set Wldb [Wld new $Tree $::WISH_FILE]
     focus $Tree
     $Wldb select_item
@@ -52,7 +59,7 @@ oo::define App method prepare_ui {} {
     wm title . [tk appname]
     wm iconname . [tk appname]
     wm iconphoto . -default [ui::icon icon.svg]
-    wm minsize . 640 480
+    wm minsize . 580 480
 }
 
 oo::define App method make_fonts {} {
@@ -94,14 +101,17 @@ oo::define App method make_tree {} {
 }
 
 oo::define App method make_layout {} {
-    const opts "-pady 3 -padx 3"
-    pack .mf.tb -fill x -side top {*}$opts
-    my make_toolbar_layout
-    pack .mf.tf -fill both -expand 1 {*}$opts
+    my make_toolbars_layout
+    grid .mf.tb -row 0 -column 0 -sticky we
+    grid .mf.tf -row 1 -column 0 -sticky news
+    grid rowconfigure .mf .mf.tf -weight 1
+    grid columnconfigure .mf .mf.tf -weight 1
     pack .mf -fill both -expand 1
 }
 
 oo::define App method make_bindings {} {
+    bind .mf.tb <Configure> [callback on_configure %x %y %w %h]
+    bind .mf.tb <<ToolbarResizedWidth>> [callback on_toolbar_resized_width]
     bind . <Control-q> [callback on_quit]
     bind . <Control-s> [callback on_file_save]
     wm protocol . WM_DELETE_WINDOW [callback on_quit]

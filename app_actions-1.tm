@@ -5,6 +5,18 @@ package require list_pick_form
 package require message_form
 package require yes_no_form
 
+oo::define App method on_configure {x y width height} {
+    if {$ToolbarWidth != $width} {
+        set ToolbarWidth $width
+        event generate .mf.tb <<ToolbarResizedWidth>>
+    }
+}
+
+oo::define App method on_toolbar_resized_width {} {
+    after cancel $RefreshToolbarsId
+    set RefreshToolbarsId [after 100 [callback refresh_toolbars]]
+}
+
 oo::define App method on_file_save {} { $Wldb save }
 
 oo::define App method on_config {} {
@@ -18,6 +30,7 @@ oo::define App method on_config {} {
         if {$family ne [$config family] || $size != [$config size]} {
             my make_fonts
         }
+        my refresh_toolbars
     }
 }
 
