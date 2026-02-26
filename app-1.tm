@@ -52,7 +52,7 @@ oo::define App method prepare_ui {} {
     wm title . [tk appname]
     wm iconname . [tk appname]
     wm iconphoto . -default [ui::icon icon.svg]
-    wm minsize . 940 720
+    wm minsize . 640 480
 }
 
 oo::define App method make_fonts {} {
