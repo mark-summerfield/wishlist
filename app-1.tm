@@ -98,7 +98,7 @@ oo::define App method make_tree {} {
     pack $sa -fill both -expand 1
     $Tree column #0 -stretch 1 -anchor w \
         -minwidth [font measure TkDefaultFont "User/Group/Wish"]
-    $Tree column 0 -stretch 1 -anchor center
+    $Tree column 0 -stretch 1 -anchor w
     $Tree column 1 -stretch 0 -anchor e \
         -width [font measure TkDefaultFont "W123456789ABCD"]
     $Tree heading #0 -text User/Group/Wish
