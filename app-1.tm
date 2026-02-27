@@ -92,13 +92,15 @@ oo::define App method make_widgets {} {
 oo::define App method make_tree {} {
     set sa [scrollutil::scrollarea .mf.tf.sa]
     set Tree [ttk::treeview .mf.tf.sa.tree -selectmode browse -striped 1 \
-                -columns {name note wid}]
+                -columns {note wid}]
     ui::apply_treeview_bindings $Tree
     $sa setwidget $Tree
     pack $sa -fill both -expand 1
-    $Tree column #0 -stretch 1
-    $Tree column 0 -stretch 1
-    $Tree column 1 -stretch 0
+    $Tree column #0 -stretch 1 -anchor w \
+        -minwidth [font measure TkDefaultFont "User/Group/Wish"]
+    $Tree column 0 -stretch 1 -anchor center
+    $Tree column 1 -stretch 0 -anchor e \
+        -width [font measure TkDefaultFont "W123456789ABCD"]
     $Tree heading #0 -text User/Group/Wish
     $Tree heading 0 -text Note
     $Tree heading 1 -text ID/ISBN
@@ -114,8 +116,6 @@ oo::define App method make_layout {} {
 }
 
 oo::define App method make_bindings {} {
-    bind .mf.tf <Configure> [callback on_configure_tf %x %y %w %h]
-    bind .mf.tb <<TreeResizedWidth>> [callback on_tree_resized_width]
     bind .mf.tb <Configure> [callback on_configure_tb %x %y %w %h]
     bind .mf.tb <<ToolbarResizedWidth>> [callback on_toolbar_resized_width]
     bind . <Control-e> [callback on_wish_edit]

@@ -112,7 +112,7 @@ oo::define WishForm method on_validate_name txt {
 }
 
 oo::define WishForm method on_validate_id txt {
-    if {$txt eq ""} {
+    if {[string trim $txt] eq ""} {
         .wish_form.mf.isbn_label configure -text ?
     } else {
         set id [regsub {[-\s]+} $txt ""]
@@ -127,14 +127,10 @@ oo::define WishForm method on_validate_id txt {
 }
 
 oo::define WishForm method on_ok {} {
-    $Wish set_name [.wish_form.mf.name_entry get]
-    $Wish set_note [.wish_form.mf.note_entry get]
+    $Wish set_name [string trim [.wish_form.mf.name_entry get]]
+    $Wish set_note [string trim [.wish_form.mf.note_entry get]]
     set id [regsub {[-\s]+} [.wish_form.mf.id_entry get] ""]
-    try {
-        set id [valtype::isbn validate $id]
-    } on error err {
-        # ignore
-    }
+    catch { set id [valtype::isbn validate $id] }
     $Wish set_id $id
     $Ok set 1
     my delete
