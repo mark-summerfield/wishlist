@@ -91,10 +91,10 @@ oo::define App method make_wish_menu {} {
     menu .menu.wish
     .menu add cascade -menu .menu.wish -label Wish -underline 0
     .menu.wish add command -command [callback on_wish_new] \
-        -label New… -underline 0 -compound left \
+        -label New… -underline 0 -compound left -accelerator Ctrl+N \
         -image [ui::icon wish-new.svg $::MENU_ICON_SIZE]
     .menu.wish add command -command [callback on_wish_edit] \
-        -label Edit… -underline 0 -compound left \
+        -label Edit… -underline 0 -compound left -accelerator Ctrl+E \
         -image [ui::icon wish-edit.svg $::MENU_ICON_SIZE]
     .menu.wish add command -command [callback on_wish_lookup] \
         -label Lookup -underline 3 -compound left \

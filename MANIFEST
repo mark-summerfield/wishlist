@@ -3,6 +3,8 @@ app-1.tm
 app_menus-1.tm
 app_toolbars-1.tm
 app_actions-1.tm # TODO
+wish-1.tm
+wish_form-1.tm
 config-1.tm
 config_form-1.tm
 wld-1.tm # TODO

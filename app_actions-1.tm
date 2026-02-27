@@ -3,9 +3,17 @@
 package require entry_form
 package require list_pick_form
 package require message_form
+package require wish_form
 package require yes_no_form
 
-oo::define App method on_configure {x y width height} {
+oo::define App method on_configure_tf {x y width height} {
+    if {$TreeWidth != $width} {
+        set TreeWidth $width
+        event generate .mf.tb <<TreeResizedWidth>>
+    }
+}
+
+oo::define App method on_configure_tb {x y width height} {
     if {$ToolbarWidth != $width} {
         set ToolbarWidth $width
         event generate .mf.tb <<ToolbarResizedWidth>>
@@ -15,6 +23,13 @@ oo::define App method on_configure {x y width height} {
 oo::define App method on_toolbar_resized_width {} {
     after cancel $RefreshToolbarsId
     set RefreshToolbarsId [after 100 [callback refresh_toolbars]]
+}
+
+oo::define App method on_tree_resized_width {} {
+    after cancel $RefreshTreeId
+    if {[info exists Wldb]} {
+        set RefreshTreeId [after 100 [$Wldb resize_tree_columns]]
+    }
 }
 
 oo::define App method on_file_save {} { $Wldb save }
@@ -194,7 +209,16 @@ oo::define App method on_group_delete {} {
 }
 
 oo::define App method on_wish_new {} {
-    puts on_wish_new ;# TODO
+    if {[set gid [$Wldb group_id]] ne ""} {
+        set group [$Wldb item_text $gid]
+        lassign [$Wldb group_user $gid] _ user
+        set wish [Wish new]
+        if {[WishForm show $user $group $wish]} {
+            $Wldb wish_add $gid $wish
+        } else {
+            $wish destroy
+        }
+    }
 }
 # TODO once I can create wishes retest on_group_move_to_user
 

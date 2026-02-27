@@ -69,7 +69,7 @@ oo::define Wld method load {} {
     if {![llength [$Tree children {}]]} {
         my setup
     }
-    my resize_columns
+    my resize_tree_columns
 }
 
 oo::define Wld method setup {} {
@@ -78,11 +78,11 @@ oo::define Wld method setup {} {
     set user [textutil::string::cap $::tcl_platform(user)]
     set uid [$Tree insert {} end -id U[incr U] -text $user -open 1]
     set gid [$Tree insert $uid end -id G[incr G] -text Fiction]
-    my resize_columns
+    my resize_tree_columns
 }
 
-oo::define Wld method resize_columns {} {
-    puts resize_columns ;# TODO
+oo::define Wld method resize_tree_columns {} {
+    puts resize_tree_columns ;# TODO
 }
 
 oo::define Wld method save {} {
@@ -270,6 +270,12 @@ oo::define Wld method group_delete gid {
     set id [my prev_or_next_of $gid]
     $Tree delete $gid
     my select_item $id
+}
+
+oo::define Wld method wish_add {gid wish} {
+    classvariable W
+    my select_item [$Tree insert $gid end -id W[incr W] \
+        -text [$wish name] -values [list [$wish note] [$wish id]]]
 }
 
 # TODO NOTE: for Group & Wish moves the parent is *not* {} so must be set!

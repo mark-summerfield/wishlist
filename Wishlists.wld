@@ -1,7 +1,8 @@
 Open	User	Group	Wish	Note	ID
 true	Mark
 0	=	Fiction
-0	=	Tech
+true	=	Tech
+0	=	=	Tcl/Tk: A Developer's Guide (4th edition)	Clif Flynt B.S	9780443265563
 0	=	Bio
 0	=	History
 0	=	Non-Fiction

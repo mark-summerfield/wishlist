@@ -13,6 +13,8 @@ oo::singleton create App {
     variable Wldb
     variable ToolbarWidth
     variable RefreshToolbarsId
+    variable TreeWidth
+    variable RefreshTreeId
 }
 
 package require app_actions
@@ -25,6 +27,8 @@ oo::define App constructor {} {
     Config new
     set ToolbarWidth 0
     set RefreshToolbarsId ""
+    set TreeWidth 0
+    set RefreshTreeId ""
     my make_fonts
     my make_ui
 }
@@ -110,8 +114,12 @@ oo::define App method make_layout {} {
 }
 
 oo::define App method make_bindings {} {
-    bind .mf.tb <Configure> [callback on_configure %x %y %w %h]
+    bind .mf.tf <Configure> [callback on_configure_tf %x %y %w %h]
+    bind .mf.tb <<TreeResizedWidth>> [callback on_tree_resized_width]
+    bind .mf.tb <Configure> [callback on_configure_tb %x %y %w %h]
     bind .mf.tb <<ToolbarResizedWidth>> [callback on_toolbar_resized_width]
+    bind . <Control-e> [callback on_wish_edit]
+    bind . <Control-n> [callback on_wish_new]
     bind . <Control-q> [callback on_quit]
     bind . <Control-s> [callback on_file_save]
     wm protocol . WM_DELETE_WINDOW [callback on_quit]
