@@ -1,4 +1,4 @@
-# Copyright © 2025 Mark Summerfield. All rights reserved.
+# Copyright © 2025-26 Mark Summerfield. All rights reserved.
 
 package require book_form
 package require entry_form
@@ -50,7 +50,8 @@ oo::define App method on_config {} {
 }
 
 oo::define App method on_about {} {
-    AboutForm new Wishlists https://github.com/mark-summerfield/wishlists
+    AboutForm new "Book wishlists" \
+        https://github.com/mark-summerfield/wishlists
 }
 
 oo::define App method on_quit {} {

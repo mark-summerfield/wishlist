@@ -1,4 +1,4 @@
-# Copyright © 2025 Mark Summerfield. All rights reserved.
+# Copyright © 2025-26 Mark Summerfield. All rights reserved.
 
 package require about_form
 package require config
@@ -107,6 +107,9 @@ oo::define App method make_tree {} {
     $Tree heading 0 -text Author
     $Tree heading 1 -text Note
     $Tree heading 2 -text ISBN
+    $Tree tag configure reader -foreground teal
+    $Tree tag configure group -foreground green
+    $Tree tag configure book -foreground blue
 }
 
 oo::define App method make_layout {} {

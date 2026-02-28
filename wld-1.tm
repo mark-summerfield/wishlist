@@ -1,4 +1,4 @@
-# Copyright © 2025 Mark Summerfield. All rights reserved.
+# Copyright © 2025-26 Mark Summerfield. All rights reserved.
 # File format is newline-separated records of tab-separated fields in
 # display order: Open Reader Group Title Author Note ID.
 # The ttk::treeview Tree holds all the data.
@@ -49,7 +49,7 @@ oo::define Wld method load {} {
         } else {
             set prev_reader $reader
             set rid [$Tree insert {} end -id R[incr R] -text $reader \
-                    -open $open]
+                    -open $open -tags reader]
         }
         if {$group ne ""} {
             if {$group eq "="} {
@@ -57,11 +57,11 @@ oo::define Wld method load {} {
             } else {
                 set prev_group $group
                 set gid [$Tree insert $rid end -id G[incr G] -text $group \
-                        -open $open]
+                        -open $open -tags group]
             }
             if {$title ne ""} {
                 $Tree insert $gid end -id B[incr B] -text $title \
-                    -values [list $author $note $isbn]
+                    -values [list $author $note $isbn] -tags book
             }
         }
                 
@@ -74,8 +74,9 @@ oo::define Wld method setup {} {
     classvariable R
     classvariable G
     set reader [textutil::string::cap $::tcl_platform(user)]
-    set rid [$Tree insert {} end -id R[incr R] -text $reader -open 1]
-    set gid [$Tree insert $rid end -id G[incr G] -text Fiction]
+    set rid [$Tree insert {} end -id R[incr R] -text $reader -open 1 \
+            -tags reader]
+    set gid [$Tree insert $rid end -id G[incr G] -text Fiction -tags group]
 }
 
 oo::define Wld method save {} {
@@ -202,7 +203,8 @@ oo::define Wld method reader_child_count rid {
 
 oo::define Wld method reader_add reader {
     classvariable R
-    my select_item [$Tree insert {} end -id R[incr R] -text $reader]
+    my select_item [$Tree insert {} end -id R[incr R] -text $reader \
+                    -tags reader]
 }
 
 oo::define Wld method reader_rename {rid reader} {
@@ -247,7 +249,8 @@ oo::define Wld method group_child_count gid {
 
 oo::define Wld method group_add {rid name} {
     classvariable G
-    my select_item [$Tree insert $rid end -id G[incr G] -text $name]
+    my select_item [$Tree insert $rid end -id G[incr G] -text $name \
+                    -tags group]
 }
 
 oo::define Wld method group_rename {gid name} {
@@ -294,7 +297,7 @@ oo::define Wld method group_delete gid {
 oo::define Wld method book_add {gid book} {
     classvariable B
     my select_item [$Tree insert $gid end -id B[incr B] \
-        -text [$book title] \
+        -text [$book title] -tags book \
         -values [list [$book author] [$book note] [$book isbn]]]
     my resize_columns
 }
