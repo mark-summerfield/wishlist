@@ -78,9 +78,9 @@ oo::define Config method set_lastfilename lastfilename {
 }
 
 oo::define Config method show_file_toolbar {} { return 1 }
-oo::define Config method show_user_toolbar {} { return 1 }
+oo::define Config method show_reader_toolbar {} { return 1 }
 oo::define Config method show_group_toolbar {} { return 1 }
-oo::define Config method show_wish_toolbar {} { return 1 }
+oo::define Config method show_book_toolbar {} { return 1 }
 
 oo::define Config method to_string {} {
     return "Config filename=$Filename blinking=$Blinking\

@@ -1,10 +1,24 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
+package require book_form
 package require entry_form
 package require list_pick_form
 package require message_form
-package require wish_form
 package require yes_no_form
+
+oo::define App method on_configure_tf {x y width height} {
+    if {$TreeWidth != $width} {
+        set TreeWidth $width
+        event generate .mf.tf <<TreeResizedWidth>>
+    }
+}
+
+oo::define App method on_tree_resized_width {} {
+    after cancel $RefreshTreeId
+    if {[info exists Wldb]} {
+        set RefreshTreeId [after 100 [$Wldb resize_columns]]
+    }
+}
 
 oo::define App method on_configure_tb {x y width height} {
     if {$ToolbarWidth != $width} {
@@ -45,71 +59,71 @@ oo::define App method on_quit {} {
     exit
 }
 
-oo::define App method on_user_new {} {
-    if {[set name [EntryForm show "New User — [tk appname]" \
-            "Enter a new user’s name" [$Wldb user_names 1]]] ne ""} {
-        $Wldb user_add $name
+oo::define App method on_reader_new {} {
+    if {[set name [EntryForm show "New Reader — [tk appname]" \
+            "Enter a new reader’s name" [$Wldb reader_names 1]]] ne ""} {
+        $Wldb reader_add $name
     }
 }
 
-oo::define App method on_user_rename {} {
-    if {[set uid [$Wldb user_id]] ne ""} {
-        set name [$Tree item $uid -text]
-        if {[set name [EntryForm show "Rename User — [tk appname]" \
-                "Enter a new name for user\n“$name”" \
-                [$Wldb user_names 1] $name]] ne ""} {
-            $Wldb user_rename $uid $name
+oo::define App method on_reader_rename {} {
+    if {[set rid [$Wldb reader_id]] ne ""} {
+        set name [$Tree item $rid -text]
+        if {[set name [EntryForm show "Rename Reader — [tk appname]" \
+                "Enter a new name for reader\n“$name”" \
+                [$Wldb reader_names 1] $name]] ne ""} {
+            $Wldb reader_rename $rid $name
         }
     }
 }
 
-oo::define App method on_user_move_first {} {
-    if {[set uid [$Wldb user_id]] ne ""} {
-        $Wldb user_move_first $uid
+oo::define App method on_reader_move_first {} {
+    if {[set rid [$Wldb reader_id]] ne ""} {
+        $Wldb reader_move_first $rid
     }
 }
 
-oo::define App method on_user_move_up {} {
-    if {[set uid [$Wldb user_id]] ne ""} {
-        $Wldb user_move_up $uid
+oo::define App method on_reader_move_up {} {
+    if {[set rid [$Wldb reader_id]] ne ""} {
+        $Wldb reader_move_up $rid
     }
 }
 
-oo::define App method on_user_move_down {} {
-    if {[set uid [$Wldb user_id]] ne ""} {
-        $Wldb user_move_down $uid
+oo::define App method on_reader_move_down {} {
+    if {[set rid [$Wldb reader_id]] ne ""} {
+        $Wldb reader_move_down $rid
     }
 }
 
-oo::define App method on_user_move_last {} {
-    if {[set uid [$Wldb user_id]] ne ""} {
-        $Wldb user_move_last $uid
+oo::define App method on_reader_move_last {} {
+    if {[set rid [$Wldb reader_id]] ne ""} {
+        $Wldb reader_move_last $rid
     }
 }
 
-oo::define App method on_user_delete {} {
-    if {[set uid [$Wldb user_id]] ne ""} {
-        set name [$Wldb item_text $uid]
-        if {[set n [$Wldb user_child_count $uid]]} {
-            MessageForm show "Delete User — [tk appname]" \
-                "Cannot delete user “$name”.\nDelete all their Groups\
+oo::define App method on_reader_delete {} {
+    if {[set rid [$Wldb reader_id]] ne ""} {
+        set name [$Wldb item_text $rid]
+        if {[set n [$Wldb reader_child_count $rid]]} {
+            MessageForm show "Delete Reader — [tk appname]" \
+                "Cannot delete reader “$name”.\nDelete all their Groups\
                 first." OK warning
         } else {
-            if {[YesNoForm show "Delete User — [tk appname]" \
-                    "Delete user “$name”?" no] eq "yes"} {
-                $Wldb user_delete $uid
+            if {[YesNoForm show "Delete Reader — [tk appname]" \
+                    "Delete reader “$name”?" no] eq "yes"} {
+                $Wldb reader_delete $rid
             }
         }
     }
 }
 
 oo::define App method on_group_new {} {
-    if {[set uid [$Wldb user_id]] ne ""} {
-        set user [$Tree item $uid -text]
+    if {[set rid [$Wldb reader_id]] ne ""} {
+        set reader [$Tree item $rid -text]
         if {[set name [EntryForm show "New Group — [tk appname]" \
-                "Enter a new group name for user\n“$user”" \
-                [$Wldb group_names $uid 1]]] ne ""} {
-            $Wldb group_add $uid $name
+                "Enter a new group name for reader\n“$reader”" \
+                [$Wldb group_names $rid 1]]] ne ""} {
+            $Wldb group_add $rid $name
         }
     }
 }
@@ -149,29 +163,29 @@ oo::define App method on_group_move_last {} {
     }
 }
 
-oo::define App method on_group_move_to_user {} {
+oo::define App method on_group_move_to_reader {} {
     if {[set gid [$Wldb group_id]] ne ""} {
         set group [$Wldb item_text $gid]
-        lassign [$Wldb group_user $gid] uid user
-        set users [$Wldb user_names]
-        if {[set i [lsearch -nocase $users $user]] > -1} {
-            set users [lremove $users $i]
+        lassign [$Wldb group_reader $gid] rid reader
+        set readers [$Wldb reader_names]
+        if {[set i [lsearch -nocase $readers $reader]] > -1} {
+            set readers [lremove $readers $i]
         }
-        if {![llength $users]} {
-            MessageForm show "Move Group to User — [tk appname]" \
-                "Cannot move group\n“$group”\nto another user, since\
-                there is no other user to move it to." OK warning
+        if {![llength $readers]} {
+            MessageForm show "Move Group to Reader — [tk appname]" \
+                "Cannot move group\n“$group”\nto another reader, since\
+                there is no other reader to move it to." OK warning
         } else {
-            if {[set new_user [ListPickForm show \
-                    "Pick User — [tk appname]" \
-                    "Move user\n“$user”’s\n“$group”\ngroup to:" $users]] \
-                    ne ""} {
-                set new_uid [$Wldb user_id_for_name $new_user]
-                if {[set existing_gid [$Wldb group_id_for_name $new_uid \
+            if {[set new_reader [ListPickForm show \
+                    "Pick Reader — [tk appname]" \
+                    "Move reader\n“$reader”’s\n“$group”\ngroup to:" \
+                    $readers]] ne ""} {
+                set new_rid [$Wldb reader_id_for_name $new_reader]
+                if {[set existing_gid [$Wldb group_id_for_name $new_rid \
                         $group]] ne {}} {
-                    $Wldb group_merge_to_user $gid $existing_gid $new_uid
+                    $Wldb group_merge_to_reader $gid $existing_gid $new_rid
                 } else {
-                    $Wldb group_move_to_user $gid $new_uid
+                    $Wldb group_move_to_reader $gid $new_rid
                 }
             }
         }
@@ -194,50 +208,50 @@ oo::define App method on_group_delete {} {
     }
 }
 
-oo::define App method on_wish_new {} {
+oo::define App method on_book_new {} {
     if {[set gid [$Wldb group_id]] ne ""} {
         set group [$Wldb item_text $gid]
-        lassign [$Wldb group_user $gid] _ user
-        set wish [Wish new]
-        if {[WishForm show $user $group $wish]} {
-            $Wldb wish_add $gid $wish
+        lassign [$Wldb group_reader $gid] _ reader
+        set book [Book new]
+        if {[BookForm show $reader $group $book]} {
+            $Wldb book_add $gid $book
         }
-        $wish destroy
+        $book destroy
     }
 }
 
-oo::define App method on_wish_edit {} {
-    puts on_wish_edit ;# TODO
+oo::define App method on_book_edit {} {
+    puts on_book_edit ;# TODO
 }
 
-oo::define App method on_wish_lookup {} {
-    puts on_wish_lookup ;# TODO
+oo::define App method on_book_lookup {} {
+    puts on_book_lookup ;# TODO
 }
 
-oo::define App method on_wish_copy {} {
-    puts on_wish_copy ;# TODO
+oo::define App method on_book_copy {} {
+    puts on_book_copy ;# TODO
 }
 
-oo::define App method on_wish_move_first {} {
-    puts on_wish_move_first ;# TODO
+oo::define App method on_book_move_first {} {
+    puts on_book_move_first ;# TODO
 }
 
-oo::define App method on_wish_move_up {} {
-    puts on_wish_move_up ;# TODO
+oo::define App method on_book_move_up {} {
+    puts on_book_move_up ;# TODO
 }
 
-oo::define App method on_wish_move_down {} {
-    puts on_wish_move_down ;# TODO
+oo::define App method on_book_move_down {} {
+    puts on_book_move_down ;# TODO
 }
 
-oo::define App method on_wish_move_last {} {
-    puts on_wish_move_last ;# TODO
+oo::define App method on_book_move_last {} {
+    puts on_book_move_last ;# TODO
 }
 
-oo::define App method on_wish_move_to_user_group {} {
-    puts on_wish_move_to_user_group ;# TODO
+oo::define App method on_book_move_to_reader_group {} {
+    puts on_book_move_to_reader_group ;# TODO
 }
 
-oo::define App method on_wish_delete {} {
-    puts on_wish_delete ;# TODO
+oo::define App method on_book_delete {} {
+    puts on_book_delete ;# TODO
 }

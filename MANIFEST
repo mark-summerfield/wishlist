@@ -1,10 +1,13 @@
+# TODO try tagging title items with foreground blue; authors with green;
+# notes with brown
+
 wishlists.tk
 app-1.tm
 app_menus-1.tm
 app_toolbars-1.tm
 app_actions-1.tm # TODO
-wish-1.tm
-wish_form-1.tm
+book-1.tm
+book_form-1.tm
 config-1.tm
 config_form-1.tm
 wld-1.tm # TODO
@@ -31,7 +34,6 @@ st.sh
 #	    site-specific search urls based on the items's ISBN or title
 #	    for the websites I use (e.g., amz, abe, hen) & open a
 #	    browser page so I get to see the prices in each one.
-#	Otherwise use the ID or name for a generic duckduckgo search
 
 # NOTE idea: config checkboxes to hide/show individual toolbars
 

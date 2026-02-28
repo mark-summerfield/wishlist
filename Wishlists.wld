@@ -1,23 +1,23 @@
-Open	User	Group	Wish	Note	ID
+Open	Reader	Group	Book	Author	Note	ISBN
 true	Mark
 1	=	Fiction
 true	=	Tech
-0	=	=	Tcl/Tk: A Developer's Guide (4th edition)	Clif Flynt B.S	9780443265563
+0	=	=	Tcl/Tk: A Developer's Guide (4th edition)	Clif Flynt B.S		9780443265563
 0	=	Bio
 0	=	History
 true	=	Non-Fiction
-0	=	=	The World of the Cold War: 1945-1991	Vladislav Zubok	9780141985107
-0	=	=	Analog Superpowers: How Twentieth-Century Technology Theft Built the National Security State	Katherine C. Epstein (pbk?)	9780226831220
+0	=	=	The World of the Cold War: 1945-1991	Vladislav Zubok		9780141985107
+0	=	=	Analog Superpowers: How Twentieth-Century Technology Theft Built the National Security State	Katherine C. Epstein 	pbk?	9780226831220
 0	=	Long Shots
-0	=	CDs & DVDs
 0	=	Birthday
-true	Andrea
-0	=	Books
-0	=	CDs & DVDs
-0	=	Birthday
-true	Us
-0	=	Off Quota
-0	=	Domestic
-1	=	Anna
-0	=	=	One Sun Only	Camille Bordas	9781805220145
 0	=	Xmas
+false	=	Anna
+0	=	=	One Sun Only	Camille Bordas		9781805220145
+true	Andrea
+0	=	Fiction
+0	=	Non-Fiction
+0	=	Birthday
+0	=	Xmas
+true	Us
+0	=	Off Quota Fiction
+0	=	Off Quota Non-Fiction

@@ -47,6 +47,7 @@ oo::define App method on_startup {} {
     update
     set ToolbarWidth [winfo width .mf.tb]
     set Wldb [Wld new $Tree $::WISH_FILE]
+    set TreeWidth [winfo width .mf.tf]
     focus $Tree
     $Wldb select_item
 }
@@ -92,18 +93,20 @@ oo::define App method make_widgets {} {
 oo::define App method make_tree {} {
     set sa [scrollutil::scrollarea .mf.tf.sa]
     set Tree [ttk::treeview .mf.tf.sa.tree -selectmode browse -striped 1 \
-                -columns {note wid}]
+                -columns {author note isbn}]
     ui::apply_treeview_bindings $Tree
     $sa setwidget $Tree
     pack $sa -fill both -expand 1
     $Tree column #0 -stretch 1 -anchor w \
-        -minwidth [font measure TkDefaultFont "User/Group/Wish"]
+        -minwidth [font measure TkDefaultFont "Reader/Group/Book"]
     $Tree column 0 -stretch 1 -anchor w
-    $Tree column 1 -stretch 0 -anchor e \
+    $Tree column 1 -stretch 1 -anchor w
+    $Tree column 2 -stretch 0 -anchor e \
         -width [font measure TkDefaultFont "W123456789ABCD"]
-    $Tree heading #0 -text User/Group/Wish
-    $Tree heading 0 -text Note
-    $Tree heading 1 -text ID/ISBN
+    $Tree heading #0 -text Reader/Group/Book
+    $Tree heading 0 -text Author
+    $Tree heading 1 -text Note
+    $Tree heading 2 -text ISBN
 }
 
 oo::define App method make_layout {} {
@@ -116,10 +119,12 @@ oo::define App method make_layout {} {
 }
 
 oo::define App method make_bindings {} {
+    bind .mf.tf <Configure> [callback on_configure_tf %x %y %w %h]
+    bind .mf.tf <<TreeResizedWidth>> [callback on_tree_resized_width]
     bind .mf.tb <Configure> [callback on_configure_tb %x %y %w %h]
     bind .mf.tb <<ToolbarResizedWidth>> [callback on_toolbar_resized_width]
-    bind . <Control-e> [callback on_wish_edit]
-    bind . <Control-n> [callback on_wish_new]
+    bind . <Control-e> [callback on_book_edit]
+    bind . <Control-n> [callback on_book_new]
     bind . <Control-q> [callback on_quit]
     bind . <Control-s> [callback on_file_save]
     wm protocol . WM_DELETE_WINDOW [callback on_quit]
