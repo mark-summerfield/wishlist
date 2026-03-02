@@ -107,9 +107,9 @@ oo::define App method make_tree {} {
     $Tree heading 0 -text Author
     $Tree heading 1 -text Note
     $Tree heading 2 -text ISBN
-    $Tree tag configure reader -foreground teal
-    $Tree tag configure group -foreground green
-    $Tree tag configure book -foreground blue
+    $Tree tag configure reader -foreground #8A2CA1
+    $Tree tag configure group -foreground #2047D8
+    $Tree tag configure book -foreground #343400
 }
 
 oo::define App method make_layout {} {
