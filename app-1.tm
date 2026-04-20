@@ -126,6 +126,8 @@ oo::define App method make_bindings {} {
     bind .mf.tf <<TreeResizedWidth>> [callback on_tree_resized_width]
     bind .mf.tb <Configure> [callback on_configure_tb %x %y %w %h]
     bind .mf.tb <<ToolbarResizedWidth>> [callback on_toolbar_resized_width]
+    bind $Tree <Double-1> [callback on_book_edit]
+    bind $Tree <Return> [callback on_book_edit]
     bind . <Control-e> [callback on_book_edit]
     bind . <Control-n> [callback on_book_new]
     bind . <Control-q> [callback on_quit]

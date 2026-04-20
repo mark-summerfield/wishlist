@@ -3,6 +3,7 @@
 # display order: Open Reader Group Title Author Note ID.
 # The ttk::treeview Tree holds all the data.
 
+package require book
 package require textutil::string
 
 oo::class create Wld {
@@ -294,6 +295,12 @@ oo::define Wld method group_delete gid {
     my select_item $id
 }
 
+oo::define Wld method book bid {
+    set title [$Tree item $bid -text]
+    lassign [$Tree item $bid -values] author note isbn
+    Book new $title $author $note $isbn
+}
+
 oo::define Wld method book_add {gid book} {
     classvariable B
     my select_item [$Tree insert $gid end -id B[incr B] \
@@ -302,6 +309,12 @@ oo::define Wld method book_add {gid book} {
     my resize_columns
 }
 
-# TODO NOTE: book_edit & book_delete: call resize_columns
+oo::define Wld method book_update {gid bid book} {
+    $Tree item $bid -text [$book title] \
+        -values [list [$book author] [$book note] [$book isbn]]
+    my resize_columns
+}
+
+# TODO NOTE: book_delete: call resize_columns
 
 # TODO NOTE: for Group & book moves the parent is *not* {} so must be set!

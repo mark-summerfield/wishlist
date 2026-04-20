@@ -221,16 +221,37 @@ oo::define App method on_book_new {} {
     }
 }
 
+oo::define App method get_book {} {
+    if {[set gid [$Wldb group_id]] ne ""} {
+        set group [$Wldb item_text $gid]
+        lassign [$Wldb group_reader $gid] _ reader
+        if {[set bid [$Wldb book_id]] ne ""} {
+            return [list $gid $group $reader $bid]
+        }
+    }
+}
+
 oo::define App method on_book_edit {} {
-    puts on_book_edit ;# TODO
+    lassign [my get_book] gid group reader bid
+    if {[info exists bid]} {
+        set book [$Wldb book $bid]
+        if {[BookForm show $reader $group $book]} {
+            $Wldb book_update $gid $bid $book
+        }
+    }
 }
 
 oo::define App method on_book_lookup {} {
     puts on_book_lookup ;# TODO
 }
 
-oo::define App method on_book_copy {} {
-    puts on_book_copy ;# TODO
+oo::define App method on_book_copy_to_clipboard {} {
+    lassign [my get_book] gid group reader bid
+    if {[info exists bid]} {
+        set book [$Wldb book $bid]
+        clipboard clear
+        clipboard append "[$book title] [$book author] [$book isbn]"
+    }
 }
 
 oo::define App method on_book_move_first {} {

@@ -1,10 +1,10 @@
 # Copyright © 2025-26 Mark Summerfield. All rights reserved.
 
 package require abstract_form
+package require book
 package require tooltip 2
 package require ui
 package require valtype::isbn 1
-package require book
 
 oo::class create BookForm {
     superclass AbstractForm
@@ -33,17 +33,16 @@ oo::define BookForm constructor {ok reader group book} {
 
 oo::define BookForm method make_widgets {reader group} {
     tk::toplevel .book_form
-    wm resizable .book_form 0 0
-    set which [expr {[$Book is_valid] ? "Edit" : "New"}]
-    wm title .book_form "[tk appname] — $which Book"
+    wm minsize .book_form 560 210
+    set action [expr {[$Book is_valid] ? "Edit" : "New"}]
+    wm title .book_form "[tk appname] — $action Book"
     ttk::frame .book_form.mf
     set tip tooltip::tooltip
     ttk::label .book_form.mf.place_label_label -text "Reader/Group"
     ttk::label .book_form.mf.place_label -text "$reader/$group" \
         -relief sunken -foreground #505050
     ttk::label .book_form.mf.title_label -text Title -underline 0
-    ttk::entry .book_form.mf.title_entry -placeholder Title \
-        -validate key -validatecommand [callback on_validate_title %P]
+    ttk::entry .book_form.mf.title_entry -placeholder Title -validate key
     ui::apply_edit_bindings .book_form.mf.title_entry
     if {[$Book is_valid]} {
         .book_form.mf.title_entry insert 0 [$Book title]
@@ -61,8 +60,7 @@ oo::define BookForm method make_widgets {reader group} {
         .book_form.mf.note_entry insert 0 [$Book note]
     }
     ttk::label .book_form.mf.isbn_label -text ISBN -underline 0
-    ttk::entry .book_form.mf.isbn_entry -placeholder ISBN \
-        -validate key -validatecommand [callback on_validate_id %P]
+    ttk::entry .book_form.mf.isbn_entry -placeholder ISBN -validate key
     ui::apply_edit_bindings .book_form.mf.isbn_entry
     if {[$Book is_valid]} { .book_form.mf.isbn_entry insert 0 [$Book isbn] }
     ttk::label .book_form.mf.isbn_flag_label -text ?
@@ -76,8 +74,12 @@ oo::define BookForm method make_widgets {reader group} {
 }
 
 oo::define BookForm method prepare {} {
+    .book_form.mf.title_entry configure \
+        -validatecommand [callback on_validate_title %P]
+    .book_form.mf.isbn_entry configure \
+        -validatecommand [callback on_validate_id %P]
     if {[$Book is_valid]} {
-        .book_form.mf.title_entry insert 0 [$Book title]
+        my on_validate_id [$Book isbn]
     } else {
         my on_validate_title ""
     }

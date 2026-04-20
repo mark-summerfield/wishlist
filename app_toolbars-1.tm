@@ -100,7 +100,7 @@ oo::define App method make_book_toolbar {} {
         -image [ui::icon book-lookup.svg $::ICON_SIZE]
     $tip .mf.tb.wf1.book_lookup "Book Lookup"
     ttk::button .mf.tb.wf1.book_copy -style Toolbutton \
-        -command [callback on_book_copy] \
+        -command [callback on_book_copy_to_clipboard] \
         -image [ui::icon edit-copy.svg $::ICON_SIZE]
     $tip .mf.tb.wf1.book_copy "Book Copy to Clipboard"
     ttk::frame .mf.tb.wf2 {*}$::TOOLBAR_FRAME_OPTS

@@ -99,7 +99,7 @@ oo::define App method make_book_menu {} {
     .menu.book add command -command [callback on_book_lookup] \
         -label Lookup -underline 3 -compound left \
         -image [ui::icon book-lookup.svg $::MENU_ICON_SIZE]
-    .menu.book add command -command [callback on_book_copy] \
+    .menu.book add command -command [callback on_book_copy_to_clipboard] \
         -label "Copy to Clipboard" -underline 0 -compound left \
         -image [ui::icon edit-copy.svg $::MENU_ICON_SIZE]
     .menu.book add separator
