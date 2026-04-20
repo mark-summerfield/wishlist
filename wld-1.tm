@@ -315,6 +315,11 @@ oo::define Wld method book_update {gid bid book} {
     my resize_columns
 }
 
-# TODO NOTE: book_delete: call resize_columns
+oo::define Wld method book_delete bid {
+    set id [my prev_or_next_of $bid]
+    $Tree delete $bid
+    my select_item $id
+    my resize_columns
+}
 
-# TODO NOTE: for Group & book moves the parent is *not* {} so must be set!
+# TODO NOTE: for Group & Book moves the parent is *not* {} so must be set!

@@ -242,7 +242,7 @@ oo::define App method on_book_edit {} {
 }
 
 oo::define App method on_book_lookup {} {
-    puts on_book_lookup ;# TODO
+    puts on_book_lookup ;# TODO (6)
 }
 
 oo::define App method on_book_copy_to_clipboard {} {
@@ -255,25 +255,33 @@ oo::define App method on_book_copy_to_clipboard {} {
 }
 
 oo::define App method on_book_move_first {} {
-    puts on_book_move_first ;# TODO
+    puts on_book_move_first ;# TODO (1)
 }
 
 oo::define App method on_book_move_up {} {
-    puts on_book_move_up ;# TODO
+    puts on_book_move_up ;# TODO (3)
 }
 
 oo::define App method on_book_move_down {} {
-    puts on_book_move_down ;# TODO
+    puts on_book_move_down ;# TODO (4)
 }
 
 oo::define App method on_book_move_last {} {
-    puts on_book_move_last ;# TODO
+    puts on_book_move_last ;# TODO (2)
 }
 
 oo::define App method on_book_move_to_reader_group {} {
-    puts on_book_move_to_reader_group ;# TODO
+    puts on_book_move_to_reader_group ;# TODO (5)
 }
 
 oo::define App method on_book_delete {} {
-    puts on_book_delete ;# TODO
+    lassign [my get_book] gid group reader bid
+    if {[info exists bid]} {
+        set book [$Wldb book $bid]
+        if {[YesNoForm show "Delete Book — [tk appname]" \
+                "Delete\n“[$book title]”\nby\n“[$book author]”?"] \
+                eq "yes"} {
+            $Wldb book_delete $bid
+        }
+    }
 }
