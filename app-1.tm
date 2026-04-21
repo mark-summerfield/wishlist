@@ -3,14 +3,14 @@
 package require about_form
 package require config
 package require config_form
+package require database
 package require ref
 package require scrollutil_tile 2
 package require ui
-package require wld
 
 oo::singleton create App {
     variable Tree
-    variable Wldb
+    variable Db
     variable ToolbarWidth
     variable RefreshToolbarsId
     variable TreeWidth
@@ -46,10 +46,10 @@ oo::define App method on_startup {} {
     my refresh_toolbars
     update
     set ToolbarWidth [winfo width .mf.tb]
-    set Wldb [Wld new $Tree $::WISH_FILE]
+    set Db [Database new $Tree $::WISH_FILE]
     set TreeWidth [winfo width .mf.tf]
     focus $Tree
-    $Wldb select_item
+    $Db select_item
 }
 
 oo::define App method make_ui {} {

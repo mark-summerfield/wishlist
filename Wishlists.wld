@@ -1,8 +1,8 @@
 Open	Reader	Group	Book	Author	Note	ISBN
 true	Mark
 1	=	Fiction
-0	=	=	A test			
-0	=	=	B test			
+0	=	=	A test	one two		123
+0	=	=	B test	someone else	etc	9543943
 0	=	=	C test			
 0	=	=	D test			
 true	=	Tech

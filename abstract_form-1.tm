@@ -21,7 +21,7 @@ oo::define AbstractForm method form {} { set Form }
 
 oo::define AbstractForm method show_modal {{focus_widget ""}} {
     wm deiconify $Form
-    grab set $Form
+    catch { grab set $Form }
     raise $Form
     update
     focus $Form
