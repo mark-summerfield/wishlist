@@ -1,6 +1,10 @@
 Open	Reader	Group	Book	Author	Note	ISBN
 true	Mark
 1	=	Fiction
+0	=	=	A test			
+0	=	=	B test			
+0	=	=	C test			
+0	=	=	D test			
 true	=	Tech
 0	=	=	Tcl/Tk: A Developer's Guide (4th edition)	Clif Flynt B.S.		9780443265563
 0	=	Bio

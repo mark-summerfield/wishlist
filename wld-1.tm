@@ -322,4 +322,24 @@ oo::define Wld method book_delete bid {
     my resize_columns
 }
 
+oo::define Wld method book_move_first bid {
+    $Tree move $bid [$Tree parent $bid] 0
+}
+
+oo::define Wld method book_move_up bid {
+    if {[set prev [$Tree prev $bid]] ne {}} {
+        $Tree move $bid [$Tree parent $bid] [$Tree index $prev]
+    }
+}
+
+oo::define Wld method book_move_down bid {
+    if {[set next [$Tree next $bid]] ne {}} {
+        $Tree move $bid [$Tree parent $bid] [$Tree index $next]
+    }
+}
+
+oo::define Wld method book_move_last bid {
+    $Tree move $bid [$Tree parent $bid] end
+}
+
 # TODO NOTE: for Group & Book moves the parent is *not* {} so must be set!

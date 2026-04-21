@@ -221,7 +221,7 @@ oo::define App method on_book_new {} {
     }
 }
 
-oo::define App method get_book {} {
+oo::define App method get_book_details {} {
     if {[set gid [$Wldb group_id]] ne ""} {
         set group [$Wldb item_text $gid]
         lassign [$Wldb group_reader $gid] _ reader
@@ -232,7 +232,7 @@ oo::define App method get_book {} {
 }
 
 oo::define App method on_book_edit {} {
-    lassign [my get_book] gid group reader bid
+    lassign [my get_book_details] gid group reader bid
     if {[info exists bid]} {
         set book [$Wldb book $bid]
         if {[BookForm show $reader $group $book]} {
@@ -242,12 +242,11 @@ oo::define App method on_book_edit {} {
 }
 
 oo::define App method on_book_lookup {} {
-    puts on_book_lookup ;# TODO (6)
+    puts on_book_lookup ;# TODO (2)
 }
 
 oo::define App method on_book_copy_to_clipboard {} {
-    lassign [my get_book] gid group reader bid
-    if {[info exists bid]} {
+    if {[set bid [$Wldb book_id]] ne ""} {
         set book [$Wldb book $bid]
         clipboard clear
         clipboard append "[$book title] [$book author] [$book isbn]"
@@ -255,28 +254,35 @@ oo::define App method on_book_copy_to_clipboard {} {
 }
 
 oo::define App method on_book_move_first {} {
-    puts on_book_move_first ;# TODO (1)
+    if {[set bid [$Wldb book_id]] ne ""} {
+        $Wldb book_move_first $bid
+    }
 }
 
 oo::define App method on_book_move_up {} {
-    puts on_book_move_up ;# TODO (3)
+    if {[set bid [$Wldb book_id]] ne ""} {
+        $Wldb book_move_up $bid
+    }
 }
 
 oo::define App method on_book_move_down {} {
-    puts on_book_move_down ;# TODO (4)
+    if {[set bid [$Wldb book_id]] ne ""} {
+        $Wldb book_move_down $bid
+    }
 }
 
 oo::define App method on_book_move_last {} {
-    puts on_book_move_last ;# TODO (2)
+    if {[set bid [$Wldb book_id]] ne ""} {
+        $Wldb book_move_last $bid
+    }
 }
 
 oo::define App method on_book_move_to_reader_group {} {
-    puts on_book_move_to_reader_group ;# TODO (5)
+    puts on_book_move_to_reader_group ;# TODO (1)
 }
 
 oo::define App method on_book_delete {} {
-    lassign [my get_book] gid group reader bid
-    if {[info exists bid]} {
+    if {[set bid [$Wldb book_id]] ne ""} {
         set book [$Wldb book $bid]
         if {[YesNoForm show "Delete Book — [tk appname]" \
                 "Delete\n“[$book title]”\nby\n“[$book author]”?"] \
