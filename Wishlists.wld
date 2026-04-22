@@ -2,12 +2,10 @@ Open	Reader	Group	Book	Author	Note	ISBN
 true	Mark
 1	=	Fiction
 0	=	=	A test	one two		123
-0	=	=	C test			
-0	=	=	B test	someone else	etc	9543943
-0	=	=	D test			
 true	=	Tech
 0	=	=	Tcl/Tk: A Developer's Guide (4th edition)	Clif Flynt B.S.		9780443265563
-0	=	Bio
+true	=	Bio
+0	=	=	B test	someone else	etc	9543943
 0	=	History
 true	=	Non-Fiction
 0	=	=	The World of the Cold War: 1945-1991	Vladislav Zubok		9780141985107
@@ -15,14 +13,16 @@ true	=	Non-Fiction
 0	=	Long Shots
 0	=	Birthday
 0	=	Xmas
-false	=	Anna
+true	=	Anna
 0	=	=	One Sun Only	Camille Bordas		9781805220145
 true	Andrea
 1	=	Fiction
 0	=	=	test #1	some thing		
 0	=	Non-Fiction
-0	=	Birthday
+true	=	Birthday
+0	=	=	D test			
 0	=	Xmas
 true	Us
 0	=	Off Quota Fiction
-0	=	Off Quota Non-Fiction
+true	=	Off Quota Non-Fiction
+0	=	=	C test			

@@ -5,6 +5,7 @@ package require entry_form
 package require list_pick_form
 package require message_form
 package require move_book_form
+package require util
 package require yes_no_form
 
 oo::define App method on_configure_tf {x y width height} {
@@ -243,7 +244,18 @@ oo::define App method on_book_edit {} {
 }
 
 oo::define App method on_book_lookup {} {
-    puts on_book_lookup ;# TODO (2)
+    if {[set bid [$Db book_id]] ne ""} {
+        set book [$Db book $bid]
+        set isbn [$book isbn]
+        foreach url $::URLS {
+            regsub -all {<ISBN>} $url $isbn url
+            try {
+                util::open_url $url
+            } on error err {
+                puts "failed to lookup $url: $err"
+            }
+        }
+    }
 }
 
 oo::define App method on_book_copy_to_clipboard {} {

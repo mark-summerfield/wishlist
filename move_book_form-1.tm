@@ -102,7 +102,7 @@ oo::define MoveBookForm method on_change_reader {} {
 oo::define MoveBookForm method on_ok {} {
     set rid [$Db reader_id_for_name [$ReaderCombo get]]
     set gid [$Db group_id_for_name $rid [$GroupCombo get]]
-    $Db book_move_to_reader_group $rid $gid $Bid
+    $Db book_move_to_reader_group $gid $Bid
     my delete
 }
 

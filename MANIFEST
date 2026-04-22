@@ -2,13 +2,13 @@ wishlists.tk
 app-1.tm
 app_menus-1.tm
 app_toolbars-1.tm
-app_actions-1.tm # TODO
+app_actions-1.tm
 book-1.tm
 book_form-1.tm
 move_book_form-1.tm
 config-1.tm
 config_form-1.tm
-database-1.tm # TODO
+database-1.tm
 
 message_form-1.tm
 entry_form-1.tm
@@ -26,13 +26,5 @@ yes_no_form-1.tm
 ui-1.tm
 
 st.sh
-
-# For each item lookup:
-#	If there's a valid ISBN then create
-#	    site-specific search urls based on the items's ISBN or title
-#	    for the websites I use (e.g., amz, abe, hen) & open a
-#	    browser page so I get to see the prices in each one.
-
-# NOTE idea: config checkboxes to hide/show individual toolbars
 
 # vim: syn=yaml
