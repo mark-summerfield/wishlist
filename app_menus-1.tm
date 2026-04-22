@@ -42,7 +42,7 @@ oo::define App method make_reader_menu {} {
         -label "Move to First" -underline 8 -compound left \
         -image [ui::icon reader-go-top.svg $::MENU_ICON_SIZE]
     .menu.reader add command -command [callback on_reader_move_up] \
-        -label "Move Up" -underline 0 -compound left \
+        -label "Move Up" -underline 5 -compound left \
         -image [ui::icon reader-go-up.svg $::MENU_ICON_SIZE]
     .menu.reader add command -command [callback on_reader_move_down] \
         -label "Move Down" -underline 5 -compound left \
@@ -70,7 +70,7 @@ oo::define App method make_group_menu {} {
         -label "Move to First" -underline 8 -compound left \
         -image [ui::icon go-top.svg $::MENU_ICON_SIZE]
     .menu.group add command -command [callback on_group_move_up] \
-        -label "Move Up" -underline 0 -compound left \
+        -label "Move Up" -underline 5 -compound left \
         -image [ui::icon go-up.svg $::MENU_ICON_SIZE]
     .menu.group add command -command [callback on_group_move_down] \
         -label "Move Down" -underline 5 -compound left \
@@ -79,7 +79,7 @@ oo::define App method make_group_menu {} {
         -label "Move to Last" -underline 8 -compound left \
         -image [ui::icon go-bottom.svg $::MENU_ICON_SIZE]
     .menu.group add command -command [callback on_group_move_to_reader] \
-        -label "Move to Reader…" -underline 8 -compound left \
+        -label "Move to Reader…" -underline 0 -compound left \
         -image [ui::icon group-moveto.svg $::MENU_ICON_SIZE]
     .menu.group add separator
     .menu.group add command -command [callback on_group_delete] \
@@ -97,7 +97,7 @@ oo::define App method make_book_menu {} {
         -label Edit… -underline 0 -compound left -accelerator Ctrl+E \
         -image [ui::icon book-edit.svg $::MENU_ICON_SIZE]
     .menu.book add command -command [callback on_book_lookup] \
-        -label Lookup -underline 3 -compound left \
+        -label Lookup -underline 1 -compound left \
         -image [ui::icon book-lookup.svg $::MENU_ICON_SIZE]
     .menu.book add command -command [callback on_book_copy_to_clipboard] \
         -label "Copy to Clipboard" -underline 0 -compound left \
@@ -107,7 +107,7 @@ oo::define App method make_book_menu {} {
         -label "Move to First" -underline 8 -compound left \
         -image [ui::icon book-go-top.svg $::MENU_ICON_SIZE]
     .menu.book add command -command [callback on_book_move_up] \
-        -label "Move Up" -underline 0 -compound left \
+        -label "Move Up" -underline 5 -compound left \
         -image [ui::icon book-go-up.svg $::MENU_ICON_SIZE]
     .menu.book add command -command [callback on_book_move_down] \
         -label "Move Down" -underline 5 -compound left \
@@ -117,7 +117,7 @@ oo::define App method make_book_menu {} {
         -image [ui::icon book-go-bottom.svg $::MENU_ICON_SIZE]
     .menu.book add command \
         -command [callback on_book_move_to_reader_group] \
-        -label "Move to Reader/Group…" -underline 8 -compound left \
+        -label "Move to Reader/Group…" -underline 0 -compound left \
         -image [ui::icon book-moveto.svg $::MENU_ICON_SIZE]
     .menu.book add separator
     .menu.book add command -command [callback on_book_delete] \
