@@ -342,4 +342,7 @@ oo::define Database method book_move_last bid {
     $Tree move $bid [$Tree parent $bid] end
 }
 
-# TODO NOTE: for Group & Book moves the parent is *not* {} so must be set!
+oo::define Database method book_move_to_reader_group {rid gid bid} {
+    puts "book_move_to_reader_group rid=$rid gid=$gid bid=$bid"
+    # TODO $Tree move $gid $rid end
+}

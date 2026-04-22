@@ -4,6 +4,7 @@ package require book_form
 package require entry_form
 package require list_pick_form
 package require message_form
+package require move_book_form
 package require yes_no_form
 
 oo::define App method on_configure_tf {x y width height} {
@@ -233,7 +234,7 @@ oo::define App method get_book_details {} {
 
 oo::define App method on_book_edit {} {
     lassign [my get_book_details] gid group reader bid
-    if {[info exists bid]} {
+    if {[info exists bid] && $bid ne ""} {
         set book [$Db book $bid]
         if {[BookForm show $reader $group $book]} {
             $Db book_update $gid $bid $book
@@ -278,7 +279,7 @@ oo::define App method on_book_move_last {} {
 }
 
 oo::define App method on_book_move_to_reader_group {} {
-    puts on_book_move_to_reader_group ;# TODO (1)
+    if {[set bid [$Db book_id]] ne ""} { MoveBookForm show $Db $bid }
 }
 
 oo::define App method on_book_delete {} {
