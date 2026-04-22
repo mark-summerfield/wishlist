@@ -5,7 +5,7 @@ app_toolbars-1.tm
 app_actions-1.tm # TODO
 book-1.tm
 book_form-1.tm
-move_book_form-1.tm # TODO
+move_book_form-1.tm
 config-1.tm
 config_form-1.tm
 database-1.tm # TODO
