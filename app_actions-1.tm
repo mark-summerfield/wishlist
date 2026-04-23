@@ -71,7 +71,7 @@ oo::define App method on_reader_new {} {
 
 oo::define App method on_reader_rename {} {
     if {[set rid [$Db reader_id]] ne ""} {
-        set name [$Tree item $rid -text]
+        set name [$Db item_text $rid]
         if {[set name [EntryForm show "Rename Reader — [tk appname]" \
                 "Enter a new name for reader\n“$name”" \
                 [$Db reader_names 1] $name]] ne ""} {
@@ -122,7 +122,7 @@ oo::define App method on_reader_delete {} {
 
 oo::define App method on_group_new {} {
     if {[set rid [$Db reader_id]] ne ""} {
-        set reader [$Tree item $rid -text]
+        set reader [$Db item_text $rid]
         if {[set name [EntryForm show "New Group — [tk appname]" \
                 "Enter a new group name for reader\n“$reader”" \
                 [$Db group_names $rid 1]]] ne ""} {

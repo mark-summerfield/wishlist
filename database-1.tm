@@ -84,19 +84,19 @@ oo::define Database method save {} {
     set out [open $Filename w]
     puts $out "Open\tReader\tGroup\tBook\tAuthor\tNote\tISBN"
     try {
-        foreach reader [$Tree children {}] {
-            set open [$Tree item $reader -open]
-            set text [$Tree item $reader -text]
-            puts $out $open\t$text
-            foreach group [$Tree children $reader] {
-                set open [$Tree item $group -open]
-                set text [$Tree item $group -text]
-                puts $out $open\t=\t$text
-                foreach book [$Tree children $group] {
-                    set open [$Tree item $book -open]
-                    set text [$Tree item $book -text]
-                    lassign [$Tree item $book -values] author note isbn
-                    puts $out $open\t=\t=\t$text\t$author\t$note\t$isbn
+        foreach rid [$Tree children {}] {
+            set open [$Tree item $rid -open]
+            regsub {\s*[(]\d+[)]$} [$Tree item $rid -text] "" txt
+            puts $out $open\t$txt
+            foreach gid [$Tree children $rid] {
+                set open [$Tree item $gid -open]
+                regsub {\s*[(]\d+[)]$} [$Tree item $gid -text] "" txt
+                puts $out $open\t=\t$txt
+                foreach bid [$Tree children $gid] {
+                    set open [$Tree item $bid -open]
+                    set txt [$Tree item $bid -text]
+                    lassign [$Tree item $bid -values] author note isbn
+                    puts $out $open\t=\t=\t$txt\t$author\t$note\t$isbn
                 }
             }
         }
@@ -109,8 +109,14 @@ oo::define Database method resize_columns {} {
     set author_width 0
     set note_width 0
     foreach rid [$Tree children {}] {
-        foreach gid [$Tree children $rid] {
-            foreach bid [$Tree children $gid] {
+        set groups [$Tree children $rid]
+        regsub {\s*[(]\d+[)]$} [$Tree item $rid -text] "" txt
+        $Tree item $rid -text "$txt ([llength $groups])"
+        foreach gid $groups {
+            set books [$Tree children $gid]
+            regsub {\s*[(]\d+[)]$} [$Tree item $gid -text] "" txt
+            $Tree item $gid -text "$txt ([llength $books])"
+            foreach bid $books {
                 lassign [$Tree item $bid -values] author note _
                 set width [font measure TkDefaultFont $author]
                 if {$width > $author_width} { set author_width $width }
@@ -181,17 +187,20 @@ oo::define Database method book_id {} {
     return "" ;# No Book selected
 }
 
-oo::define Database method item_text iid { $Tree item $iid -text }
+oo::define Database method item_text iid {
+    regsub {\s*[(]\d+[)]$} [$Tree item $iid -text] ""
+}
 
 oo::define Database method group_reader gid {
     set rid [$Tree parent $gid]
-    list $rid [$Tree item $rid -text]
+    regsub {\s*[(]\d+[)]$} [$Tree item $rid -text] "" txt
+    list $rid $txt
 }
 
 oo::define Database method reader_names {{casefold 0}} {
     set readernames [list]
-    foreach reader [$Tree children {}] {
-        set name [$Tree item $reader -text]
+    foreach rid [$Tree children {}] {
+        regsub {\s*[(]\d+[)]$} [$Tree item $rid -text] "" name
         if {$casefold} { set name [string tolower $name] }
         lappend readernames $name
     }
@@ -210,6 +219,7 @@ oo::define Database method reader_add reader {
 
 oo::define Database method reader_rename {rid reader} {
     $Tree item $rid -text $reader
+    my resize_columns
 }
 
 oo::define Database method reader_move_first rid { $Tree move $rid {} 0 }
@@ -232,12 +242,13 @@ oo::define Database method reader_delete rid {
     set id [my prev_or_next_of $rid]
     $Tree delete $rid
     my select_item $id
+    my resize_columns
 }
 
 oo::define Database method group_names {rid {casefold 0}} {
     set group_names [list]
     foreach gid [$Tree children $rid] {
-        set name [$Tree item $gid -text]
+        regsub {\s*[(]\d+[)]$} [$Tree item $gid -text] "" name
         if {$casefold} { set name [string tolower $name] }
         lappend group_names $name
     }
@@ -252,10 +263,12 @@ oo::define Database method group_add {rid name} {
     classvariable G
     my select_item [$Tree insert $rid end -id G[incr G] -text $name \
                     -tags group]
+    my resize_columns
 }
 
 oo::define Database method group_rename {gid name} {
     $Tree item $gid -text $name
+    my resize_columns
 }
 
 oo::define Database method group_move_first gid {
@@ -280,6 +293,7 @@ oo::define Database method group_move_last gid {
 
 oo::define Database method group_move_to_reader {gid rid} {
     $Tree move $gid $rid end
+    my resize_columns
 }
 
 oo::define Database method group_merge_to_reader {old_gid gid rid} {
@@ -287,12 +301,14 @@ oo::define Database method group_merge_to_reader {old_gid gid rid} {
         $Tree move $bid $gid end
     }
     $Tree delete $old_gid
+    my resize_columns
 }
 
 oo::define Database method group_delete gid {
     set id [my prev_or_next_of $gid]
     $Tree delete $gid
     my select_item $id
+    my resize_columns
 }
 
 oo::define Database method book bid {
@@ -344,4 +360,5 @@ oo::define Database method book_move_last bid {
 
 oo::define Database method book_move_to_reader_group {gid bid} {
     $Tree move $bid $gid end
+    my resize_columns
 }
