@@ -102,6 +102,9 @@ oo::define App method make_book_menu {} {
     .menu.book add command -command [callback on_book_copy_to_clipboard] \
         -label "Copy to Clipboard" -underline 0 -compound left \
         -image [ui::icon edit-copy.svg $::MENU_ICON_SIZE]
+    .menu.book add command -command [callback on_book_duplicate] \
+        -label Duplicate -underline 2 -compound left \
+        -image [ui::icon book-copy.svg $::MENU_ICON_SIZE]
     .menu.book add separator
     .menu.book add command -command [callback on_book_move_first] \
         -label "Move to First" -underline 8 -compound left \

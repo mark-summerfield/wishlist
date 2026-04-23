@@ -266,6 +266,22 @@ oo::define App method on_book_copy_to_clipboard {} {
     }
 }
 
+oo::define App method on_book_duplicate {} {
+    if {[set gid [$Db group_id]] ne ""} {
+        if {[set bid [$Db book_id]] ne ""} {
+            set book [$Db book $bid]
+            try {
+                classvariable N
+                regsub {^#\d+\s*} [$book title] "" title
+                $book set_title "#[incr N] $title"
+                $Db book_add $gid $book
+            } finally {
+                $book destroy
+            }
+        }
+    }
+}
+
 oo::define App method on_book_move_first {} {
     if {[set bid [$Db book_id]] ne ""} {
         $Db book_move_first $bid
@@ -297,10 +313,14 @@ oo::define App method on_book_move_to_reader_group {} {
 oo::define App method on_book_delete {} {
     if {[set bid [$Db book_id]] ne ""} {
         set book [$Db book $bid]
-        if {[YesNoForm show "Delete Book — [tk appname]" \
-                "Delete\n“[$book title]”\nby\n“[$book author]”?"] \
-                eq "yes"} {
-            $Db book_delete $bid
+        try {
+            if {[YesNoForm show "Delete Book — [tk appname]" \
+                    "Delete\n“[$book title]”\nby\n“[$book author]”?"] \
+                    eq "yes"} {
+                $Db book_delete $bid
+            }
+        } finally {
+            $book destroy
         }
     }
 }

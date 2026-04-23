@@ -17,6 +17,8 @@ oo::singleton create App {
     variable RefreshTreeId
 }
 
+oo::define App initialize { variable N 0 }
+
 package require app_actions
 package require app_menus
 package require app_toolbars

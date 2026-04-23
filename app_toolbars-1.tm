@@ -99,10 +99,14 @@ oo::define App method make_book_toolbar {} {
         -command [callback on_book_lookup] \
         -image [ui::icon book-lookup.svg $::ICON_SIZE]
     $tip .mf.tb.wf1.book_lookup "Book Lookup"
-    ttk::button .mf.tb.wf1.book_copy -style Toolbutton \
+    ttk::button .mf.tb.wf1.book_copy_clipboard -style Toolbutton \
         -command [callback on_book_copy_to_clipboard] \
         -image [ui::icon edit-copy.svg $::ICON_SIZE]
-    $tip .mf.tb.wf1.book_copy "Book Copy to Clipboard"
+    $tip .mf.tb.wf1.book_copy_clipboard "Book Copy to Clipboard"
+    ttk::button .mf.tb.wf1.book_duplicate -style Toolbutton \
+        -command [callback on_book_duplicate] \
+        -image [ui::icon book-copy.svg $::ICON_SIZE]
+    $tip .mf.tb.wf1.book_duplicate "Book Duplicate"
     ttk::frame .mf.tb.wf2 {*}$::TOOLBAR_FRAME_OPTS
     ttk::button .mf.tb.wf2.book_move_top -style Toolbutton \
         -command [callback on_book_move_first] \
@@ -162,7 +166,8 @@ oo::define App method make_book_toolbar_layout {} {
     pack .mf.tb.wf1.book_new -side left
     pack .mf.tb.wf1.book_edit -side left
     pack .mf.tb.wf1.book_lookup -side left
-    pack .mf.tb.wf1.book_copy -side left
+    pack .mf.tb.wf1.book_copy_clipboard -side left
+    pack .mf.tb.wf1.book_duplicate -side left
     pack .mf.tb.wf2.book_move_top -side left
     pack .mf.tb.wf2.book_move_up -side left
     pack .mf.tb.wf2.book_move_down -side left
@@ -193,7 +198,7 @@ oo::define App method refresh_toolbars {} {
         set show_toolbars 1
     }
     if {[set show_book_toolbar [$config show_book_toolbar]]} {
-        my show_toolbar 4 .mf.tb.wf1 width column row
+        my show_toolbar 5 .mf.tb.wf1 width column row
         my show_toolbar 4 .mf.tb.wf2 width column row
         set show_toolbars 1
     }
