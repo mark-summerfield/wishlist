@@ -362,3 +362,67 @@ oo::define Database method book_move_to_reader_group {gid bid} {
     $Tree move $bid $gid end
     my resize_columns
 }
+
+# TODO
+oo::define Database method book_find {find_text find_id} {
+    if {$find_text eq ""} { return }
+    if {$find_id eq {}} {
+        set find_id [lindex [$Tree children {}] 0]
+    }
+    puts [my all_items]
+}
+
+# TODO
+oo::define Database method all_items {{parent {}}} {
+    set items [list]
+    foreach item [$Tree children $parent] {
+        lappend items $item
+        set items [concat $items [my all_items $item]]
+    }
+    return $items
+}
+
+# GEMINI
+#
+# Procedure to get all items in the tree in order
+# proc get_all_items {w {parent ""}} {
+#     set items {}
+#     foreach item [$w children $parent] {
+#         lappend items $item
+#         set items [concat $items [get_all_items $w $item]]
+#     }
+#     return $items
+# }
+# 
+# # Procedure to search from a specific item ID
+# proc search_tree_from {w start_id query} {
+#     set all_items [get_all_items $w]
+#     
+#     # Find where the starting item is in the list
+#     set start_index [lsearch -exact $all_items $start_id]
+#     
+#     if {$start_index == -1} {
+#         puts "Starting item not found."
+#         return
+#     }
+# 
+#     # Iterate from the starting index to the end
+#     for {set i $start_index} {$i < [llength $all_items]} {incr i} {
+#         set item_id [lindex $all_items $i]
+#         set item_values [$w item $item_id -values]
+#         set item_text [$w item $item_id -text]
+# 
+#         # Check the label (-text) or the columns (-values)
+#         if {[string match -nocase "*$query*" $item_text] || \
+#             [lsearch -glob -nocase $item_values "*$query*"] != -1} {
+#             
+#             # Found it! Select and scroll to it
+#             $w selection set $item_id
+#             $w focus $item_id
+#             $w see $item_id
+#             return $item_id
+#         }
+#     }
+#     puts "No match found."
+# }
+# 

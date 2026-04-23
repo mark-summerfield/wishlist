@@ -243,6 +243,20 @@ oo::define App method on_book_edit {} {
     }
 }
 
+oo::define App method on_book_find {} {
+    set FindText ""
+    set FindId {}
+    $Db book_find $FindText $FindId
+}
+
+oo::define App method on_book_find_again {} {
+    if {$FindText eq ""} {
+        my on_book_find
+    } else {
+        $Db book_find $FindText $FindId
+    }
+}
+
 oo::define App method on_book_lookup {} {
     if {[set bid [$Db book_id]] ne ""} {
         set book [$Db book $bid]

@@ -95,6 +95,10 @@ oo::define App method make_book_toolbar {} {
         -command [callback on_book_edit] \
         -image [ui::icon book-edit.svg $::ICON_SIZE]
     $tip .mf.tb.wf1.book_edit "Book Edit"
+    ttk::button .mf.tb.wf1.book_find -style Toolbutton \
+        -command [callback on_book_find] \
+        -image [ui::icon book-find.svg $::ICON_SIZE]
+    $tip .mf.tb.wf1.book_find "Book Find"
     ttk::button .mf.tb.wf1.book_lookup -style Toolbutton \
         -command [callback on_book_lookup] \
         -image [ui::icon book-lookup.svg $::ICON_SIZE]
@@ -165,6 +169,7 @@ oo::define App method make_book_toolbar_layout {} {
     set n 0
     pack .mf.tb.wf1.book_new -side left
     pack .mf.tb.wf1.book_edit -side left
+    pack .mf.tb.wf1.book_find -side left
     pack .mf.tb.wf1.book_lookup -side left
     pack .mf.tb.wf1.book_copy_clipboard -side left
     pack .mf.tb.wf1.book_duplicate -side left
@@ -198,7 +203,7 @@ oo::define App method refresh_toolbars {} {
         set show_toolbars 1
     }
     if {[set show_book_toolbar [$config show_book_toolbar]]} {
-        my show_toolbar 5 .mf.tb.wf1 width column row
+        my show_toolbar 6 .mf.tb.wf1 width column row
         my show_toolbar 4 .mf.tb.wf2 width column row
         set show_toolbars 1
     }

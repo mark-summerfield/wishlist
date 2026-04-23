@@ -96,6 +96,12 @@ oo::define App method make_book_menu {} {
     .menu.book add command -command [callback on_book_edit] \
         -label Edit… -underline 0 -compound left -accelerator Ctrl+E \
         -image [ui::icon book-edit.svg $::MENU_ICON_SIZE]
+    .menu.book add command -command [callback on_book_find] \
+        -label Find -underline 1 -compound left -accelerator Ctrl+F \
+        -image [ui::icon book-find.svg $::MENU_ICON_SIZE]
+    .menu.book add command -command [callback on_book_find_again] \
+        -label "Find Again" -underline 5 -compound left -accelerator F3 \
+        -image [ui::icon book-find-again.svg $::MENU_ICON_SIZE]
     .menu.book add command -command [callback on_book_lookup] \
         -label Lookup -underline 1 -compound left \
         -image [ui::icon book-lookup.svg $::MENU_ICON_SIZE]

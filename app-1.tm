@@ -15,6 +15,8 @@ oo::singleton create App {
     variable RefreshToolbarsId
     variable TreeWidth
     variable RefreshTreeId
+    variable FindText
+    variable FindId
 }
 
 oo::define App initialize { variable N 0 }
@@ -48,6 +50,8 @@ oo::define App method on_startup {} {
     my refresh_toolbars
     update
     set ToolbarWidth [winfo width .mf.tb]
+    set FindText ""
+    set FindId {}
     set Db [Database new $Tree $::WISH_FILE]
     set TreeWidth [winfo width .mf.tf]
     focus $Tree
@@ -131,6 +135,8 @@ oo::define App method make_bindings {} {
     bind $Tree <Double-1> [callback on_book_edit]
     bind $Tree <Return> [callback on_book_edit]
     bind . <Control-e> [callback on_book_edit]
+    bind . <Control-f> [callback on_book_find]
+    bind . <F3> [callback on_book_find_again]
     bind . <Control-n> [callback on_book_new]
     bind . <Control-q> [callback on_quit]
     bind . <Control-s> [callback on_file_save]
