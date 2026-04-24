@@ -133,6 +133,44 @@ oo::define Database method resize_columns {} {
     }
 }
 
+
+oo::define Database method collapse_all {} {
+    my collapse_or_expand_all 0
+}
+
+oo::define Database method expand_all {} {
+    my collapse_or_expand_all 1
+}
+
+oo::define Database method collapse_or_expand_all {expand} {
+    foreach rid [$Tree children {}] {
+        $Tree item $rid -open $expand
+        foreach gid [$Tree children $rid] {
+            $Tree item $gid -open $expand
+        }
+    }
+}
+
+oo::define Database method counts {} {
+    set readers [$Tree children {}]
+    set nreaders [llength $readers]
+    set ngroups 0
+    set nbooks 0
+    foreach rid $readers {
+        set groups [$Tree children $rid]
+        incr ngroups [llength $groups]
+        foreach gid $groups {
+            set books [$Tree children $gid]
+            incr nbooks [llength $books]
+        }
+    }
+    list $nreaders $ngroups $nbooks
+}
+
+oo::define Database method item_text iid {
+    regsub {\s*[(]\d+[)]$} [$Tree item $iid -text] ""
+}
+
 oo::define Database method select_item {{id {}}} {
     set children [$Tree children {}]
     if {[llength $children]} {
@@ -185,10 +223,6 @@ oo::define Database method book_id {} {
     set tid [$Tree selection]
     if {[string match B* $tid]} { return $tid }
     return "" ;# No Book selected
-}
-
-oo::define Database method item_text iid {
-    regsub {\s*[(]\d+[)]$} [$Tree item $iid -text] ""
 }
 
 oo::define Database method group_reader gid {
@@ -363,66 +397,25 @@ oo::define Database method book_move_to_reader_group {gid bid} {
     my resize_columns
 }
 
-# TODO
-oo::define Database method book_find {find_text find_id} {
+oo::define Database method book_find {find_text {find_id ""}} {
     if {$find_text eq ""} { return }
-    if {$find_id eq {}} {
-        set find_id [lindex [$Tree children {}] 0]
+    set started [expr {$find_id eq "" ? 1 : 0}]
+    foreach rid [$Tree children {}] {
+        foreach gid [$Tree children $rid] {
+            foreach bid [$Tree children $gid] {
+                if {$started} {
+                    set title [my item_text $bid]
+                    lassign [$Tree item $bid -values] author note
+                    if {[string match -nocase *$find_text* $title] || \
+                            [string match -nocase *$find_text* $author] || \
+                            [string match -nocase *$find_text* $note]} {
+                        my select_item $bid
+                        return $bid
+                    }
+                } else {
+                    if {$bid eq $find_id} { set started 1 }
+                }
+            }
+        }
     }
-    puts [my all_items]
 }
-
-# TODO
-oo::define Database method all_items {{parent {}}} {
-    set items [list]
-    foreach item [$Tree children $parent] {
-        lappend items $item
-        set items [concat $items [my all_items $item]]
-    }
-    return $items
-}
-
-# GEMINI
-#
-# Procedure to get all items in the tree in order
-# proc get_all_items {w {parent ""}} {
-#     set items {}
-#     foreach item [$w children $parent] {
-#         lappend items $item
-#         set items [concat $items [get_all_items $w $item]]
-#     }
-#     return $items
-# }
-# 
-# # Procedure to search from a specific item ID
-# proc search_tree_from {w start_id query} {
-#     set all_items [get_all_items $w]
-#     
-#     # Find where the starting item is in the list
-#     set start_index [lsearch -exact $all_items $start_id]
-#     
-#     if {$start_index == -1} {
-#         puts "Starting item not found."
-#         return
-#     }
-# 
-#     # Iterate from the starting index to the end
-#     for {set i $start_index} {$i < [llength $all_items]} {incr i} {
-#         set item_id [lindex $all_items $i]
-#         set item_values [$w item $item_id -values]
-#         set item_text [$w item $item_id -text]
-# 
-#         # Check the label (-text) or the columns (-values)
-#         if {[string match -nocase "*$query*" $item_text] || \
-#             [lsearch -glob -nocase $item_values "*$query*"] != -1} {
-#             
-#             # Found it! Select and scroll to it
-#             $w selection set $item_id
-#             $w focus $item_id
-#             $w see $item_id
-#             return $item_id
-#         }
-#     }
-#     puts "No match found."
-# }
-# 

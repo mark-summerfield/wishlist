@@ -36,6 +36,10 @@ oo::define App method on_toolbar_resized_width {} {
 
 oo::define App method on_file_save {} { $Db save }
 
+oo::define App method on_file_collapse {} { $Db collapse_all }
+
+oo::define App method on_file_expand {} { $Db expand_all }
+
 oo::define App method on_config {} {
     set config [Config new]
     set ok [Ref new 0]
@@ -52,8 +56,9 @@ oo::define App method on_config {} {
 }
 
 oo::define App method on_about {} {
-    AboutForm new "Book wishlists" \
-        https://github.com/mark-summerfield/wishlists
+    lassign [$Db counts] readers groups books
+    set desc "$readers Readers • $groups Groups • $books Books"
+    AboutForm new $desc https://github.com/mark-summerfield/wishlists
 }
 
 oo::define App method on_quit {} {
@@ -77,6 +82,15 @@ oo::define App method on_reader_rename {} {
                 [$Db reader_names 1] $name]] ne ""} {
             $Db reader_rename $rid $name
         }
+    }
+}
+
+oo::define App method on_reader_export_pdf {} {
+    if {[set rid [$Db reader_id]] ne ""} {
+        set books [list]
+        set reader [$Db item_text $rid]
+        # TODO gather all books
+        # TODO print page(s) title=reader then rows of books
     }
 }
 
@@ -244,16 +258,17 @@ oo::define App method on_book_edit {} {
 }
 
 oo::define App method on_book_find {} {
-    set FindText ""
-    set FindId {}
-    $Db book_find $FindText $FindId
+    if {[set FindText [EntryForm show "Book Find — [tk appname]" "Find" \
+            {} $FindText]] ne ""} {
+        set FindBid [$Db book_find $FindText]
+    }
 }
 
 oo::define App method on_book_find_again {} {
     if {$FindText eq ""} {
         my on_book_find
     } else {
-        $Db book_find $FindText $FindId
+        set FindBid [$Db book_find $FindText $FindBid]
     }
 }
 

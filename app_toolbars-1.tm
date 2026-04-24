@@ -18,6 +18,15 @@ oo::define App method make_file_toolbar {} {
         -command [callback on_file_save] \
         -image [ui::icon document-save.svg $::ICON_SIZE]
     $tip .mf.tb.ff1.file_save "File Save"
+    ttk::frame .mf.tb.ff2 {*}$::TOOLBAR_FRAME_OPTS
+    ttk::button .mf.tb.ff2.file_collapse -style Toolbutton \
+        -command [callback on_file_collapse] \
+        -image [ui::icon collapse.svg $::ICON_SIZE]
+    $tip .mf.tb.ff2.file_collapse "Collase All"
+    ttk::button .mf.tb.ff2.file_expand -style Toolbutton \
+        -command [callback on_file_expand] \
+        -image [ui::icon expand.svg $::ICON_SIZE]
+    $tip .mf.tb.ff2.file_expand "Expand All"
 }
 
 oo::define App method make_reader_toolbar {} {
@@ -143,6 +152,8 @@ oo::define App method make_toolbars_layout {} {
 
 oo::define App method make_file_toolbar_layout {} {
     pack .mf.tb.ff1.file_save -side left
+    pack .mf.tb.ff2.file_collapse -side left
+    pack .mf.tb.ff2.file_expand -side left
 }
 
 oo::define App method make_reader_toolbar_layout {} {
@@ -183,13 +194,14 @@ oo::define App method make_book_toolbar_layout {} {
 oo::define App method refresh_toolbars {} {
     set config [Config new]
     set width [winfo width .mf.tb]
-    grid remove .mf.tb.ff1 .mf.tb.uf1 .mf.tb.uf2 .mf.tb.cf1 .mf.tb.cf2 \
-                .mf.tb.wf1 .mf.tb.wf2
+    grid remove .mf.tb.ff1 .mf.tb.ff2 .mf.tb.uf1 .mf.tb.uf2 .mf.tb.cf1 \
+                .mf.tb.cf2 .mf.tb.wf1 .mf.tb.wf2
     set row 0
     set column 0
     set show_toolbars 0
     if {[set show_file_toolbar [$config show_file_toolbar]]} {
         my show_toolbar 1 .mf.tb.ff1 width column row
+        my show_toolbar 2 .mf.tb.ff2 width column row
         set show_toolbars 1
     }
     if {[set show_reader_toolbar [$config show_reader_toolbar]]} {
@@ -199,12 +211,12 @@ oo::define App method refresh_toolbars {} {
     }
     if {[set show_group_toolbar [$config show_group_toolbar]]} {
         my show_toolbar 2 .mf.tb.cf1 width column row
-        my show_toolbar 4 .mf.tb.cf2 width column row
+        my show_toolbar 5 .mf.tb.cf2 width column row
         set show_toolbars 1
     }
     if {[set show_book_toolbar [$config show_book_toolbar]]} {
         my show_toolbar 6 .mf.tb.wf1 width column row
-        my show_toolbar 4 .mf.tb.wf2 width column row
+        my show_toolbar 5 .mf.tb.wf2 width column row
         set show_toolbars 1
     }
     if {$show_toolbars} {

@@ -16,7 +16,7 @@ oo::singleton create App {
     variable TreeWidth
     variable RefreshTreeId
     variable FindText
-    variable FindId
+    variable FindBid
 }
 
 oo::define App initialize { variable N 0 }
@@ -51,7 +51,7 @@ oo::define App method on_startup {} {
     update
     set ToolbarWidth [winfo width .mf.tb]
     set FindText ""
-    set FindId {}
+    set FindBid ""
     set Db [Database new $Tree $::WISH_FILE]
     set TreeWidth [winfo width .mf.tf]
     focus $Tree

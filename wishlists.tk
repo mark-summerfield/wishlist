@@ -17,6 +17,9 @@ const URLS [list \
     https://www.abebooks.co.uk/servlet/SearchResults?isbn=<ISBN> \
 ]
 
+set CAIRO 1
+if {[catch { package require tclmcairo }]} { set CAIRO 0 }
+
 package require app
 
 set app [App new]

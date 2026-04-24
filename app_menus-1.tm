@@ -16,6 +16,13 @@ oo::define App method make_file_menu {} {
         -label Save -underline 0 -accelerator Ctrl+S -compound left \
         -image [ui::icon document-save.svg $::MENU_ICON_SIZE]
     .menu.file add separator
+    .menu.file add command -command [callback on_file_collapse] \
+        -label "Collapse All" -underline 1 -compound left \
+        -image [ui::icon collapse.svg $::MENU_ICON_SIZE]
+    .menu.file add command -command [callback on_file_expand] \
+        -label "Expand All" -underline 0 -compound left \
+        -image [ui::icon expand.svg $::MENU_ICON_SIZE]
+    .menu.file add separator
     .menu.file add command -command [callback on_config] -label Config… \
         -underline 0 -compound left \
         -image [ui::icon preferences-system.svg $::MENU_ICON_SIZE]
@@ -38,6 +45,12 @@ oo::define App method make_reader_menu {} {
         -label Rename… -underline 0 -compound left \
         -image [ui::icon reader-rename.svg $::MENU_ICON_SIZE]
     .menu.reader add separator
+    if {$::CAIRO} {
+        .menu.reader add command -command [callback on_reader_export_pdf] \
+            -label "Export to PDF…" -underline 1 -compound left \
+            -image [ui::icon pdf.svg $::MENU_ICON_SIZE]
+        .menu.reader add separator
+    }
     .menu.reader add command -command [callback on_reader_move_first] \
         -label "Move to First" -underline 8 -compound left \
         -image [ui::icon reader-go-top.svg $::MENU_ICON_SIZE]
