@@ -2,6 +2,7 @@
 
 package require book_form
 package require entry_form
+package require export_pdf
 package require list_pick_form
 package require message_form
 package require move_book_form
@@ -87,10 +88,15 @@ oo::define App method on_reader_rename {} {
 
 oo::define App method on_reader_export_pdf {} {
     if {[set rid [$Db reader_id]] ne ""} {
-        set books [list]
         set reader [$Db item_text $rid]
-        # TODO gather all books
-        # TODO print page(s) title=reader then rows of books
+        set groups [$Db books $rid]
+        set filename [file home]/$reader-Wishlist.pdf
+        if {[export_pdf $filename $reader $groups]} {
+            # TODO Change to YesNoForm
+            # Show Exported PDF?
+            MessageForm show "Reader Export — [tk appname]" \
+                "Exported reader to\n“$filename”." OK info
+        }
     }
 }
 

@@ -351,6 +351,17 @@ oo::define Database method book bid {
     Book new $title $author $note $isbn
 }
 
+oo::define Database method books rid {
+    set groups [dict create]
+    foreach gid [$Tree children $rid] {
+        set group [my item_text $gid]
+        foreach bid [$Tree children $gid] {
+            dict lappend groups $group [my book $bid]
+        }
+    }
+    return $groups
+}
+
 oo::define Database method book_add {gid book} {
     classvariable B
     my select_item [$Tree insert $gid end -id B[incr B] \
