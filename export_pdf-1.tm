@@ -6,11 +6,10 @@ proc export_pdf {filename reader groups} {
     const BLACK "-color {0 0 0}"
     const WIDTH 595
     const HEIGHT 842
-    set Y 36
-    set X 36
+    set Y 54 ;# ¾" margin
+    set X 54
     set cg [tclmcairo::new $WIDTH $HEIGHT -mode pdf -file $filename]
     try {
-        $cg clear 1 1 1
         lassign [$cg font_measure $TITLE $TITLE_FONT] w h
         set x [expr {($WIDTH / 2.0) - ($w / 2.0)}]
         set y $Y
