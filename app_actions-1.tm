@@ -92,10 +92,10 @@ oo::define App method on_reader_export_pdf {} {
         set groups [$Db books $rid]
         set filename [file home]/$reader-Wishlist.pdf
         if {[export_pdf $filename $reader $groups]} {
-            # TODO Change to YesNoForm
-            # Show Exported PDF?
-            MessageForm show "Reader Export — [tk appname]" \
-                "Exported reader to\n“$filename”." OK info
+            if {[YesNoForm show "Reader Export — [tk appname]" \
+                    "Show exported file\n“$filename”?" yes] eq "yes"} {
+                util::open_url $filename
+            }
         }
     }
 }

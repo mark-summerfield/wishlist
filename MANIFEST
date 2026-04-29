@@ -2,8 +2,8 @@ wishlists.tk
 app-1.tm
 app_menus-1.tm
 app_toolbars-1.tm
-app_actions-1.tm # TODO
-export_pdf-1.tm # TODO
+app_actions-1.tm
+export_pdf-1.tm
 book-1.tm
 book_form-1.tm
 move_book_form-1.tm
