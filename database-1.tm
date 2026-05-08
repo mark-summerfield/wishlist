@@ -167,6 +167,8 @@ oo::define Database method counts {} {
     list $nreaders $ngroups $nbooks
 }
 
+oo::define Database method identify {x y} { $Tree identify item $x $y }
+
 oo::define Database method item_text iid {
     regsub {\s*[(]\d+[)]$} [$Tree item $iid -text] ""
 }

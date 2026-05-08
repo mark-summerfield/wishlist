@@ -9,6 +9,19 @@ package require move_book_form
 package require util
 package require yes_no_form
 
+oo::define App method on_context_menu {x y X Y} {
+    if {[set tid [$Db identify $x $y]] ne ""} {
+        $Db select_item $tid
+        if {[string match R* $tid]} {
+            tk_popup .menu.reader $X $Y
+        } elseif {[string match G* $tid]} {
+            tk_popup .menu.group $X $Y
+        } elseif {[string match B* $tid]} {
+            tk_popup .menu.book $X $Y
+        }
+    }
+}
+
 oo::define App method on_configure_tf {x y width height} {
     if {$TreeWidth != $width} {
         set TreeWidth $width

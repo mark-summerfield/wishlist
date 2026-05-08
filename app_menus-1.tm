@@ -116,7 +116,7 @@ oo::define App method make_book_menu {} {
         -label "Find Again" -underline 5 -compound left -accelerator F3 \
         -image [ui::icon book-find-again.svg $::MENU_ICON_SIZE]
     .menu.book add command -command [callback on_book_lookup] \
-        -label Lookup -underline 1 -compound left \
+        -label Lookup -underline 1 -compound left -accelerator Ctrl+L \
         -image [ui::icon book-lookup.svg $::MENU_ICON_SIZE]
     .menu.book add command -command [callback on_book_copy_to_clipboard] \
         -label "Copy to Clipboard" -underline 0 -compound left \
