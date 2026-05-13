@@ -294,13 +294,26 @@ oo::define App method on_book_find_again {} {
 oo::define App method on_book_lookup {} {
     if {[set bid [$Db book_id]] ne ""} {
         set book [$Db book $bid]
-        set isbn [$book isbn]
-        foreach url $::URLS {
-            regsub -all {<ISBN>} $url $isbn url
-            try {
-                util::open_url $url
-            } on error err {
-                puts "failed to lookup $url: $err"
+        if {[set isbn [$book isbn]] ne ""} {
+            foreach url $::ISBN_URLS {
+                regsub -all {<ISBN>} $url $isbn url
+                try {
+                    util::open_url $url
+                } on error err {
+                    puts "failed to lookup $url: $err"
+                }
+            }
+        } else {
+            set title [$book title]
+            set author [$book author]
+            foreach url $::WORDS_URLS {
+                regsub -all {<AUTHOR>} $url $author url
+                regsub -all {<TITLE>} $url $title url
+                try {
+                    util::open_url $url
+                } on error err {
+                    puts "failed to lookup $url: $err"
+                }
             }
         }
     }
