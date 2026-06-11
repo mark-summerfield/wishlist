@@ -1,6 +1,11 @@
 #!/usr/bin/env wish9
 # Copyright © 2026 Mark Summerfield. All rights reserved.
 
+const HAS_TLS [expr {![catch { package require tls 2} ]}]
+if {$::HAS_TLS} {
+    package require http 2
+    ::http::register https 443 ::tls::socket
+}
 if {![catch {file readlink [info script]} name]} {
     const APPPATH [file dirname $name]
 } else {
@@ -9,7 +14,7 @@ if {![catch {file readlink [info script]} name]} {
 tcl::tm::path add $APPPATH
 set ::auto_path [linsert $::auto_path 0 [file home]/opt/tcl9lib]
 
-const VERSION 1.1.0
+const VERSION 1.2.0
 const WISH_FILE [file home]/data/Wishlists.wld
 const ISBN_URLS [list \
     https://www.amazon.co.uk/s?k=<ISBN> \

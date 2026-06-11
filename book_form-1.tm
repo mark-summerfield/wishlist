@@ -2,6 +2,8 @@
 
 package require abstract_form
 package require book
+package require http 2
+package require json 1
 package require tooltip 2
 package require ui
 package require valtype::isbn 1
@@ -65,6 +67,13 @@ oo::define BookForm method make_widgets {reader group} {
     if {[$Book is_valid]} { .book_form.mf.isbn_entry insert 0 [$Book isbn] }
     ttk::label .book_form.mf.isbn_flag_label -text ?
     ttk::frame .book_form.mf.bf
+    ttk::button .book_form.mf.bf.complete_button -text Complete \
+        -underline 0 -compound left \
+        -image [ui::icon complete.svg $::ICON_SIZE] \
+        -command [callback on_complete]
+    if {[$Book title] ne "" && [$Book author] ne ""} {
+        .book_form.mf.bf.complete_button configure -state disabled
+    }
     ttk::button .book_form.mf.bf.ok_button -text OK -underline 0 \
         -compound left -image [ui::icon ok.svg $::ICON_SIZE] \
         -command [callback on_ok]
@@ -105,6 +114,7 @@ oo::define BookForm method make_layout {} {
     grid .book_form.mf.bf -row 9 -column 0 -columnspan 3 \
         -sticky we
     pack [ttk::frame .book_form.mf.bf.pad1] -side left -expand 1
+    pack .book_form.mf.bf.complete_button -side left {*}$opts
     pack .book_form.mf.bf.ok_button -side left {*}$opts
     pack .book_form.mf.bf.cancel_button -side left {*}$opts
     pack [ttk::frame .book_form.mf.bf.pad2] -side right -expand 1
@@ -116,6 +126,7 @@ oo::define BookForm method make_bindings {} {
     bind .book_form <Escape> [callback on_cancel]
     bind .book_form <Return> [callback on_ok]
     bind .book_form <Alt-a> {focus .book_form.mf.author_entry}
+    bind .book_form <Alt-c> [callback on_complete]
     bind .book_form <Alt-i> {focus .book_form.mf.isbn_entry}
     bind .book_form <Alt-n> {focus .book_form.mf.note_entry}
     bind .book_form <Alt-o> [callback on_ok]
@@ -143,6 +154,28 @@ oo::define BookForm method on_validate_id txt {
     return 1
 }
 
+oo::define BookForm method on_complete {} {
+    tk busy .book_form
+    try {
+        if {[set isbn [string trim [.book_form.mf.isbn_entry get]]] ne ""} {
+            set isbn [regsub {[-\s]+} $isbn ""]
+            set url https://openlibrary.org/isbn/${isbn}.json
+            lassign [get_title_authors $url] title authors
+            if {[info exists title] && $title ne ""} {
+                .book_form.mf.title_entry delete 0 end
+                .book_form.mf.title_entry insert 0 $title
+            }
+            if {[info exists authors]} {
+                .book_form.mf.author_entry delete 0 end
+                .book_form.mf.author_entry insert 0 [join $authors " & "]
+            }
+        }
+    } finally {
+        tk busy forget .book_form
+        .book_form.mf.bf.complete_button configure -state disabled
+    }
+}
+
 oo::define BookForm method on_ok {} {
     $Book set_title [string trim [.book_form.mf.title_entry get]]
     $Book set_author [string trim [.book_form.mf.author_entry get]]
@@ -155,3 +188,46 @@ oo::define BookForm method on_ok {} {
 }
 
 oo::define BookForm method on_cancel {} { my delete }
+
+proc get_url_json url {
+    set token [http::geturl $url]
+    if {[set ncode [http::ncode $token]] in {301 302}} {
+        set d [http::meta $token]
+        if {[set location [dict getdef $d location ""]] eq ""} {
+            if {[set location [dict getdef $d Location ""]] eq ""} {
+                http::cleanup $token
+                return
+            }
+        }
+        http::cleanup $token
+        return [get_url_json $location]
+    }
+    if {[http::status $token] eq "ok"} {
+        set data [http::data $token]
+        http::cleanup $token
+        return $data
+    }
+}
+
+proc get_title_authors url {
+    set title ""
+    set authors [list]
+    if {[set jdata [get_url_json $url]] ne ""} {
+        set d [json::json2dict $jdata]
+        try {
+            set title [dict getdef $d title ""]
+        } on error _ {
+            return
+        }
+        foreach pathdata [dict getdef $d authors {}] {
+            set path [dict getdef $pathdata key ""]
+            set url https://openlibrary.org$path.json
+            set jdata [get_url_json $url]
+            set a [json::json2dict $jdata]
+            if {[set author [dict getdef $a name ""]] ne ""} {
+                lappend authors $author
+            }
+        }
+    }
+    list $title $authors
+}
