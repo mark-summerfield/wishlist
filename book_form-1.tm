@@ -66,6 +66,7 @@ oo::define BookForm method make_widgets {reader group} {
     ui::apply_edit_bindings .book_form.mf.isbn_entry
     if {[$Book is_valid]} { .book_form.mf.isbn_entry insert 0 [$Book isbn] }
     ttk::label .book_form.mf.isbn_flag_label -text ?
+    ttk::label .book_form.mf.info_label
     ttk::frame .book_form.mf.bf
     ttk::button .book_form.mf.bf.complete_button -text Complete \
         -underline 0 -compound left \
@@ -111,6 +112,8 @@ oo::define BookForm method make_layout {} {
     grid .book_form.mf.isbn_label -row 4 -column 0 -sticky w {*}$opts
     grid .book_form.mf.isbn_entry -row 4 -column 1 -sticky we {*}$opts
     grid .book_form.mf.isbn_flag_label -row 4 -column 2 -sticky w {*}$opts
+    grid .book_form.mf.info_label -row 5 -column 0 -columnspan 3 \
+        -sticky we {*}$opts
     grid .book_form.mf.bf -row 9 -column 0 -columnspan 3 \
         -sticky we
     pack [ttk::frame .book_form.mf.bf.pad1] -side left -expand 1
@@ -212,22 +215,40 @@ proc get_url_json url {
 proc get_title_authors url {
     set title ""
     set authors [list]
+    set errors [list]
     if {[set jdata [get_url_json $url]] ne ""} {
         set d [json::json2dict $jdata]
         try {
             set title [dict getdef $d title ""]
         } on error _ {
-            return
+            lappend errors "couldn’t find title"
         }
-        foreach pathdata [dict getdef $d authors {}] {
-            set path [dict getdef $pathdata key ""]
-            set url https://openlibrary.org$path.json
-            set jdata [get_url_json $url]
-            set a [json::json2dict $jdata]
-            if {[set author [dict getdef $a name ""]] ne ""} {
-                lappend authors $author
+        try {
+            set adata [dict getdef $d authors {}]
+            foreach pathdata $adata {
+                set path [dict getdef $pathdata key ""]
+                set url https://openlibrary.org$path.json
+                if {[set jdata [get_url_json $url]] ne ""} {
+                    set a [json::json2dict $jdata]
+                    if {[set author [dict getdef $a name ""]] ne ""} {
+                        lappend authors $author
+                    } else {
+                        lappend errors "couldn’t find authors"
+                    }
+                } else {
+                    lappend errors "couldn’t fetch authors URL"
+                }
             }
+        } on error _ {
+            lappend errors "no author data found"
         }
+    } else {
+        lappend errors "couldn’t fetch book URL"
+    }
+    if {[llength $errors]} {
+        .book_form.mf.info_label configure -foreground red \
+            -text "Completion: [join $errors "; "]."
+        return
     }
     list $title $authors
 }
