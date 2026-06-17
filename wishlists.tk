@@ -14,18 +14,18 @@ if {![catch {file readlink [info script]} name]} {
 tcl::tm::path add $APPPATH
 set ::auto_path [linsert $::auto_path 0 [file home]/opt/tcl9lib]
 
-const VERSION 1.2.1
+const VERSION 1.3.0
 const WISH_FILE [file home]/data/Wishlists.wld
 const ISBN_URLS [list \
     https://www.amazon.co.uk/s?k=<ISBN> \
     https://www.speedyhen.com/Search/Results?keyword=<ISBN> \
-    https://www.abebooks.co.uk/servlet/SearchResults?isbn=<ISBN> \
 ]
+# https://www.abebooks.co.uk/servlet/SearchResults?isbn=<ISBN>
 const WORDS_URLS [list \
     https://www.amazon.co.uk/s?k=<TITLE>+<AUTHOR>&i=stripbooks \
     https://www.speedyhen.com/Search/Results?keyword=<TITLE>+<AUTHOR> \
-    https://www.abebooks.co.uk/servlet/SearchResults?sts=t&an=<AUTHOR>&tn=<TITLE>
 ]
+# https://www.abebooks.co.uk/servlet/SearchResults?sts=t&an=<AUTHOR>&tn=<TITLE>
 
 set CAIRO 1
 if {[catch { package require tclmcairo }]} { set CAIRO 0 }
