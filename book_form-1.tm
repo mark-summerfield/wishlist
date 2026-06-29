@@ -146,7 +146,7 @@ oo::define BookForm method on_validate_id txt {
     if {[string trim $txt] eq ""} {
         .book_form.mf.isbn_flag_label configure -text ?
     } else {
-        set isbn [regsub {[-\s]+} $txt ""]
+        set isbn [my SanitizeIsbn]
         try {
             valtype::isbn validate $isbn
             .book_form.mf.isbn_flag_label configure -text ✔
@@ -157,11 +157,19 @@ oo::define BookForm method on_validate_id txt {
     return 1
 }
 
+oo::define BookForm method SanitizeIsbn {} {
+    if {[set isbn [string trim [.book_form.mf.isbn_entry get]]] ne ""} {
+        set isbn [regsub -all {\D+} $isbn ""]
+        .book_form.mf.isbn_entry delete 0 end
+        .book_form.mf.isbn_entry insert 0 $isbn
+        return $isbn
+    }
+}
+
 oo::define BookForm method on_complete {} {
     tk busy .book_form
     try {
-        if {[set isbn [string trim [.book_form.mf.isbn_entry get]]] ne ""} {
-            set isbn [regsub {[-\s]+} $isbn ""]
+        if {[set isbn [my SanitizeIsbn]] ne ""} {
             set url https://openlibrary.org/isbn/${isbn}.json
             lassign [get_title_authors $url] title authors
             if {[info exists title] && $title ne ""} {
@@ -183,7 +191,7 @@ oo::define BookForm method on_ok {} {
     $Book set_title [string trim [.book_form.mf.title_entry get]]
     $Book set_author [string trim [.book_form.mf.author_entry get]]
     $Book set_note [string trim [.book_form.mf.note_entry get]]
-    set isbn [regsub {[-\s]+} [.book_form.mf.isbn_entry get] ""]
+    set isbn [my SanitizeIsbn]
     catch { set isbn [valtype::isbn validate $isbn] }
     $Book set_isbn $isbn
     $Ok set 1
