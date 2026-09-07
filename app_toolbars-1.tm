@@ -226,17 +226,17 @@ oo::define App method refresh_toolbars {} {
     }
 }
 
-oo::define App method show_toolbar {colspan tb width column row} {
-    upvar 1 $width width_ $column column_ $row row_ 
+oo::define App method show_toolbar {colspan tb width_ column_ row_} {
+    upvar 1 $width_ width $column_ column $row_ row 
     set full_width [winfo width .mf.tb]
     set rwidth [winfo reqwidth $tb]
-    if {$rwidth > $width_} {
-        set width_ $full_width
-        set column_ 0
-        incr row_
+    if {$rwidth > $width} {
+        set width $full_width
+        set column 0
+        incr row
     }
-    grid $tb -row $row_ -column $column_ -columnspan $colspan -sticky w
-    incr column_ $colspan
-    incr width_ -$rwidth
+    grid $tb -row $row -column $column -columnspan $colspan -sticky w
+    incr column $colspan
+    incr width -$rwidth
 }
 
