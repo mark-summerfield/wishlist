@@ -5,6 +5,7 @@
 
 package require book
 package require textutil::string
+package require util
 
 oo::class create Database {
     variable Tree
@@ -110,12 +111,16 @@ oo::define Database method resize_columns {} {
     set note_width 0
     foreach rid [$Tree children {}] {
         set groups [$Tree children $rid]
-        regsub {\s*[(]\d+[)]$} [$Tree item $rid -text] "" txt
-        $Tree item $rid -text "$txt ([llength $groups])"
+        lassign [my reader_counts $rid] ngroups nbooks
+        regsub {\s*[(].+?[)]$} [$Tree item $rid -text] "" txt
+        lassign [util::n_s $nbooks] nbooks s
+        lassign [util::n_s $ngroups] ngroups t
+        $Tree item $rid -text "$txt ($nbooks book$s in $ngroups group$t)"
         foreach gid $groups {
             set books [$Tree children $gid]
-            regsub {\s*[(]\d+[)]$} [$Tree item $gid -text] "" txt
-            $Tree item $gid -text "$txt ([llength $books])"
+            regsub {\s*[(].+?[)]$} [$Tree item $gid -text] "" txt
+            lassign [util::n_s [llength $books]] nbooks s
+            $Tree item $gid -text "$txt ($nbooks book$s)"
             foreach bid $books {
                 lassign [$Tree item $bid -values] author note _
                 set width [font measure TkDefaultFont $author]
@@ -165,6 +170,18 @@ oo::define Database method counts {} {
         }
     }
     list $nreaders $ngroups $nbooks
+}
+
+oo::define Database method reader_counts rid {
+    set ngroups 0
+    set nbooks 0
+    set groups [$Tree children $rid]
+    incr ngroups [llength $groups]
+    foreach gid $groups {
+        set books [$Tree children $gid]
+        incr nbooks [llength $books]
+    }
+    list $ngroups $nbooks
 }
 
 oo::define Database method identify {x y} { $Tree identify item $x $y }
