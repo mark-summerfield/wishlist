@@ -1,7 +1,6 @@
 # Copyright © 2025-26 Mark Summerfield. All rights reserved.
 
 package require about_form
-package require config
 package require config_form
 package require database
 package require ref
@@ -27,8 +26,7 @@ package require app_toolbars
 
 oo::define App constructor {} {
     ui::wishinit
-    tk appname Wishlists
-    Config new
+    tk appname $::APPNAME
     set ToolbarWidth 0
     set RefreshToolbarsId ""
     set TreeWidth 0

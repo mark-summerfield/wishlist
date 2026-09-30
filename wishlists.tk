@@ -14,7 +14,12 @@ if {![catch {file readlink [info script]} name]} {
 tcl::tm::path add $APPPATH
 set ::auto_path [linsert $::auto_path 0 [file home]/opt/tcl9lib]
 
+const APPNAME Wishlists
 const VERSION 1.4.0
+
+package require config
+Config new
+
 const WISH_FILE [file home]/data/Wishlists.wld
 const ISBN_URLS [list \
     https://www.amazon.co.uk/s?k=<ISBN> \
@@ -32,5 +37,4 @@ if {[catch { package require tclmcairo }]} { set CAIRO 0 }
 
 package require app
 
-set app [App new]
-$app show
+[App new] show
