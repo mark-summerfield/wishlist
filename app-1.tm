@@ -10,8 +10,7 @@ package require ui
 oo::singleton create App {
     variable Tree
     variable Db
-    variable ToolbarWidth
-    variable RefreshToolbarsId
+    variable Toolbars
     variable TreeWidth
     variable RefreshTreeId
     variable FindText
@@ -27,8 +26,7 @@ package require app_toolbars
 oo::define App constructor {} {
     ui::wishinit
     tk appname $::APPNAME
-    set ToolbarWidth 0
-    set RefreshToolbarsId ""
+    set Toolbars {}
     set TreeWidth 0
     set RefreshTreeId ""
     my make_fonts
@@ -45,9 +43,9 @@ oo::define App method show {} {
 }
 
 oo::define App method on_startup {} {
-    my refresh_toolbars
+    set config [Config new]
+    $Toolbars hide_toolbars {*}[$config hidden_toolbars]
     update
-    set ToolbarWidth [winfo width .mf.tb]
     set FindText ""
     set FindBid ""
     set Db [Database new $Tree $::WISH_FILE]
@@ -58,8 +56,11 @@ oo::define App method on_startup {} {
 
 oo::define App method make_ui {} {
     my prepare_ui
+    ttk::frame .mf ;# main frame
+    my make_toolbars
     my make_menus
-    my make_widgets
+    ttk::frame .mf.tf ;# tree frame
+    my make_tree
     my make_layout
     my make_bindings
 }
@@ -83,15 +84,6 @@ oo::define App method make_fonts {} {
     font create Italic -family $family -size $size -slant italic
     font create BoldItalic -family $family -size $size -weight bold \
         -slant italic
-}
-
-oo::define App method make_widgets {} {
-    set config [Config new]
-    ttk::frame .mf ;# main frame
-    ttk::frame .mf.tb ;# toolbar
-    ttk::frame .mf.tf ;# tree frame
-    my make_toolbars
-    my make_tree
 }
 
 oo::define App method make_tree {} {
@@ -128,8 +120,6 @@ oo::define App method make_layout {} {
 oo::define App method make_bindings {} {
     bind .mf.tf <Configure> [callback on_configure_tf %x %y %w %h]
     bind .mf.tf <<TreeResizedWidth>> [callback on_tree_resized_width]
-    bind .mf.tb <Configure> [callback on_configure_tb %x %y %w %h]
-    bind .mf.tb <<ToolbarResizedWidth>> [callback on_toolbar_resized_width]
     bind $Tree <Double-1> [callback on_book_edit]
     bind $Tree <Return> [callback on_book_edit]
     bind $Tree <Delete> [callback on_book_delete]

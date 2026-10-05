@@ -36,18 +36,6 @@ oo::define App method on_tree_resized_width {} {
     }
 }
 
-oo::define App method on_configure_tb {x y width height} {
-    if {$ToolbarWidth != $width} {
-        set ToolbarWidth $width
-        event generate .mf.tb <<ToolbarResizedWidth>>
-    }
-}
-
-oo::define App method on_toolbar_resized_width {} {
-    after cancel $RefreshToolbarsId
-    set RefreshToolbarsId [after 100 [callback refresh_toolbars]]
-}
-
 oo::define App method on_file_save {} { $Db save }
 
 oo::define App method on_file_collapse {} { $Db collapse_all }
@@ -77,8 +65,18 @@ oo::define App method on_about {} {
 
 oo::define App method on_quit {} {
     $Db save
-    [Config new] save
+    my save_config
     exit
+}
+
+oo::define App method save_config {} {
+    set hidden_toolbars [list]
+    dict for {toolbar show} [$Toolbars toolbars] {
+        if {!$show} { lappend hidden_toolbars $toolbar }
+    }
+    set config [Config new]
+    $config set_hidden_toolbars $hidden_toolbars
+    $config save
 }
 
 oo::define App method on_reader_new {} {

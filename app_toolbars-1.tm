@@ -1,10 +1,10 @@
 # Copyright © 2025-26 Mark Summerfield. All rights reserved.
 
+package require flowrow
 package require tooltip 2
 
-const ::TOOLBAR_FRAME_OPTS "-relief ridge -borderwidth 3"
-
 oo::define App method make_toolbars {} {
+    set Toolbars [flowrow::Row new .mf.tb]
     my make_file_toolbar
     my make_reader_toolbar
     my make_group_toolbar
@@ -13,12 +13,13 @@ oo::define App method make_toolbars {} {
 
 oo::define App method make_file_toolbar {} {
     set tip tooltip::tooltip
-    ttk::frame .mf.tb.ff1 {*}$::TOOLBAR_FRAME_OPTS
+    ttk::frame .mf.tb.ff1
     ttk::button .mf.tb.ff1.file_save -style Toolbutton \
         -command [callback on_file_save] \
         -image [ui::icon document-save.svg $::ICON_SIZE]
     $tip .mf.tb.ff1.file_save "File Save"
-    ttk::frame .mf.tb.ff2 {*}$::TOOLBAR_FRAME_OPTS
+    $Toolbars add_toolbar .mf.tb.ff1
+    ttk::frame .mf.tb.ff2
     ttk::button .mf.tb.ff2.file_collapse -style Toolbutton \
         -command [callback on_file_collapse] \
         -image [ui::icon collapse.svg $::ICON_SIZE]
@@ -27,11 +28,12 @@ oo::define App method make_file_toolbar {} {
         -command [callback on_file_expand] \
         -image [ui::icon expand.svg $::ICON_SIZE]
     $tip .mf.tb.ff2.file_expand "Expand All"
+    $Toolbars add_toolbar .mf.tb.ff2
 }
 
 oo::define App method make_reader_toolbar {} {
     set tip tooltip::tooltip
-    ttk::frame .mf.tb.uf1 {*}$::TOOLBAR_FRAME_OPTS
+    ttk::frame .mf.tb.uf1
     ttk::button .mf.tb.uf1.reader_new -style Toolbutton \
         -command [callback on_reader_new] \
         -image [ui::icon reader-new.svg $::ICON_SIZE]
@@ -40,7 +42,8 @@ oo::define App method make_reader_toolbar {} {
         -command [callback on_reader_rename] \
         -image [ui::icon reader-rename.svg $::ICON_SIZE]
     $tip .mf.tb.uf1.reader_rename "Reader Rename"
-    ttk::frame .mf.tb.uf2 {*}$::TOOLBAR_FRAME_OPTS
+    $Toolbars add_toolbar .mf.tb.uf1
+    ttk::frame .mf.tb.uf2
     ttk::button .mf.tb.uf2.reader_move_top -style Toolbutton \
         -command [callback on_reader_move_first] \
         -image [ui::icon reader-go-top.svg $::ICON_SIZE]
@@ -57,11 +60,12 @@ oo::define App method make_reader_toolbar {} {
         -command [callback on_reader_move_last] \
         -image [ui::icon reader-go-bottom.svg $::ICON_SIZE]
     $tip .mf.tb.uf2.reader_move_bottom "Reader Move to Last"
+    $Toolbars add_toolbar .mf.tb.uf2
 }
 
 oo::define App method make_group_toolbar {} {
     set tip tooltip::tooltip
-    ttk::frame .mf.tb.cf1 {*}$::TOOLBAR_FRAME_OPTS
+    ttk::frame .mf.tb.cf1
     ttk::button .mf.tb.cf1.group_new -style Toolbutton \
         -command [callback on_group_new] \
         -image [ui::icon group-new.svg $::ICON_SIZE]
@@ -70,7 +74,8 @@ oo::define App method make_group_toolbar {} {
         -command [callback on_group_rename] \
         -image [ui::icon group-rename.svg $::ICON_SIZE]
     $tip .mf.tb.cf1.group_rename "Group Rename"
-    ttk::frame .mf.tb.cf2 {*}$::TOOLBAR_FRAME_OPTS
+    $Toolbars add_toolbar .mf.tb.cf1
+    ttk::frame .mf.tb.cf2
     ttk::button .mf.tb.cf2.group_move_top -style Toolbutton \
         -command [callback on_group_move_first] \
         -image [ui::icon go-top.svg $::ICON_SIZE]
@@ -91,11 +96,12 @@ oo::define App method make_group_toolbar {} {
         -command [callback on_group_move_to_reader] \
         -image [ui::icon group-moveto.svg $::ICON_SIZE]
     $tip .mf.tb.cf2.group_move_to_reader "Group Move to Reader"
+    $Toolbars add_toolbar .mf.tb.cf2
 }
 
 oo::define App method make_book_toolbar {} {
     set tip tooltip::tooltip
-    ttk::frame .mf.tb.wf1 {*}$::TOOLBAR_FRAME_OPTS
+    ttk::frame .mf.tb.wf1
     ttk::button .mf.tb.wf1.book_new -style Toolbutton \
         -command [callback on_book_new] \
         -image [ui::icon book-new.svg $::ICON_SIZE]
@@ -120,7 +126,8 @@ oo::define App method make_book_toolbar {} {
         -command [callback on_book_duplicate] \
         -image [ui::icon book-copy.svg $::ICON_SIZE]
     $tip .mf.tb.wf1.book_duplicate "Book Duplicate"
-    ttk::frame .mf.tb.wf2 {*}$::TOOLBAR_FRAME_OPTS
+    $Toolbars add_toolbar .mf.tb.wf1
+    ttk::frame .mf.tb.wf2
     ttk::button .mf.tb.wf2.book_move_top -style Toolbutton \
         -command [callback on_book_move_first] \
         -image [ui::icon book-go-top.svg $::ICON_SIZE]
@@ -141,6 +148,7 @@ oo::define App method make_book_toolbar {} {
         -command [callback on_book_move_to_reader_group] \
         -image [ui::icon book-moveto.svg $::ICON_SIZE]
     $tip .mf.tb.wf2.book_move_to_reader "Book Move to Reader/Group"
+    $Toolbars add_toolbar .mf.tb.wf2
 }
 
 oo::define App method make_toolbars_layout {} {

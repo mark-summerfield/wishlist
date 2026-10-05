@@ -15,7 +15,7 @@ tcl::tm::path add $APPPATH
 set ::auto_path [linsert $::auto_path 0 [file home]/opt/tcl9lib]
 
 const APPNAME Wishlists
-const VERSION 1.4.0
+const VERSION 1.4.1
 
 package require config
 Config new

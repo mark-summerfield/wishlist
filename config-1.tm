@@ -10,7 +10,7 @@ oo::singleton create Config {
     variable Geometry
     variable FontFamily
     variable FontSize
-    variable LastFilename
+    variable HiddenToolbars ;# list of hidden toolbars
 }
 
 oo::define Config constructor {} {
@@ -19,7 +19,7 @@ oo::define Config constructor {} {
     set Geometry ""
     set FontFamily [font configure TkDefaultFont -family]
     set FontSize [font configure TkDefaultFont -size]
-    set LastFilename ""
+    set HiddenToolbars [list]
     if {[file exists $Filename] && [file size $Filename]} {
         set ini [ini::open $Filename -encoding utf-8 r]
         try {
@@ -32,8 +32,8 @@ oo::define Config constructor {} {
             set Geometry [ini::value $ini General Geometry $Geometry]
             set FontFamily [ini::value $ini General FontFamily $FontFamily]
             set FontSize [ini::value $ini General FontSize $FontSize]
-            set LastFilename [ini::value $ini General LastFilename \
-                $LastFilename]
+            set HiddenToolbars [split [ini::value $ini General \
+                    HiddenToolbars [join $HiddenToolbars]] " "]
         } on error err {
             puts "invalid config in '$Filename'; using defaults: $err"
         } finally {
@@ -50,7 +50,7 @@ oo::define Config method save {} {
         ini::set $ini General Geometry [wm geometry .]
         ini::set $ini General FontFamily [my family]
         ini::set $ini General FontSize [my size]
-        ini::set $ini General LastFilename $LastFilename
+        ini::set $ini General HiddenToolbars [join $HiddenToolbars]
         ini::commit $ini
     } finally {
         ini::close $ini
@@ -72,18 +72,13 @@ oo::define Config method set_size size { set FontSize $size }
 oo::define Config method family {} { set FontFamily }
 oo::define Config method set_family family { set FontFamily $family }
 
-oo::define Config method lastfilename {} { set LastFilename }
-oo::define Config method set_lastfilename lastfilename {
-    set LastFilename $lastfilename
+oo::define Config method hidden_toolbars {} { return $HiddenToolbars }
+oo::define Config method set_hidden_toolbars toolbars {
+    set HiddenToolbars $toolbars ;# toolbars must be a list
 }
-
-oo::define Config method show_file_toolbar {} { return 1 }
-oo::define Config method show_reader_toolbar {} { return 1 }
-oo::define Config method show_group_toolbar {} { return 1 }
-oo::define Config method show_book_toolbar {} { return 1 }
 
 oo::define Config method to_string {} {
     return "Config filename=$Filename blinking=$Blinking\
         scaling=[tk scaling] geometry=$Geometry fontfamily=$FontFamily\
-        fontsize=$FontSize lastfilename=[my lastfilename]"
+        fontsize=$FontSize hidden_toolbars=$HiddenToolbars"
 }

@@ -6,6 +6,8 @@ oo::define App method make_menus {} {
     my make_reader_menu
     my make_group_menu
     my make_book_menu
+    $Toolbars new_menu .menu {File Tree "Edit Reader" "Move Reader" \
+            "Edit Group" "Move Group" "Edit Book" "Move Book"}
     . configure -menu .menu
 }
 
