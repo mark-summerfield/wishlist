@@ -53,7 +53,6 @@ oo::define App method on_config {} {
         if {$family ne [$config family] || $size != [$config size]} {
             my make_fonts
         }
-        my refresh_toolbars
     }
 }
 

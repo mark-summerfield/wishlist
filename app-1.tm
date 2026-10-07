@@ -109,7 +109,6 @@ oo::define App method make_tree {} {
 }
 
 oo::define App method make_layout {} {
-    my make_toolbars_layout
     grid .mf.tb -row 0 -column 0 -sticky we
     grid .mf.tf -row 1 -column 0 -sticky news
     grid rowconfigure .mf .mf.tf -weight 1
