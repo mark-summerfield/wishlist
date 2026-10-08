@@ -10,7 +10,7 @@ oo::singleton create Config {
     variable Geometry
     variable FontFamily
     variable FontSize
-    variable HiddenToolbars ;# list of hidden toolbars
+    variable HiddenToolbars
 }
 
 oo::define Config constructor {} {
