@@ -35,7 +35,7 @@ proc ldelete {lst item} {
     if {[set i [lsearch -exact $lst $item]] != -1} {
         return [lremove $lst $i]
     }
-    set lst
+    return $lst
 }
 
 proc lrandom lst { lindex $lst [expr {int(rand() * [llength $lst])}] }
@@ -46,7 +46,7 @@ proc lstride {lst {stride 2}} {
             incr i $stride; incr j $stride} {
         lappend strides [lrange $lst $i $j]
     }
-    set strides
+    return $strides
 }
 
 namespace eval util {}
@@ -81,7 +81,7 @@ proc util::term_width {{defwidth 72}} {
     if {[dict exists [chan configure stdout] -mode]} { ;# tty
         return [lindex [chan configure stdout -winsize] 0]
     }
-    set defwidth ;# redirected
+    return $defwidth ;# redirected
 }
 
 proc util::islink filename { expr {![catch {file link $filename}]} }
