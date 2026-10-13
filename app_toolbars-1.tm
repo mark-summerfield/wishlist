@@ -4,7 +4,7 @@ package require flowrow
 package require tooltip 2
 
 oo::define App method make_toolbars {} {
-    set Toolbars [flowrow::Row new .mf.tb]
+    set Toolbars [Flowrow new .mf.tb]
     my make_file_toolbar
     my make_reader_toolbar
     my make_group_toolbar
