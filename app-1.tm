@@ -45,7 +45,7 @@ oo::define App method show {} {
 oo::define App method on_startup {} {
     set config [Config new]
     $Toolbars hide_toolbars {*}[$config hidden_toolbars]
-    update
+    update idletasks
     set FindText ""
     set FindBid ""
     set Db [Database new $Tree $::WISH_FILE]
